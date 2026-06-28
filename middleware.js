@@ -15,7 +15,7 @@
 
 
 // 👇 ここを true / false で切り替えるだけ
-const PASSWORD_ENABLED = true;
+const PASSWORD_ENABLED = false;
 
 // 👇 パスワード（変更したい時はここを書き換える）
 const PASSWORD = "waza2";
