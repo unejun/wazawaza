@@ -1401,16 +1401,15 @@
 
   /* ─────── HEADER (yellow bar) ─────── */
   .c-topbar{position:sticky;top:0;z-index:130;background:var(--cyellow);border-bottom:2px solid #000}
-  .c-topbar-in{max-width:1360px;margin:0 auto;height:var(--hh);padding:0 clamp(16px,3vw,40px);
-    display:flex;align-items:center;gap:24px}
+  .c-topbar-in{max-width:none;margin:0;height:var(--hh);padding:0 clamp(24px,2.4vw,44px);
+    display:flex;align-items:center;gap:55px}
   .c-logo{flex:0 0 auto;display:flex;align-items:center;line-height:0}
-  .c-logo img{height:34px;width:auto;display:block}
-  .c-nav{display:flex;align-items:center;gap:clamp(18px,2.4vw,40px);margin-left:8px}
-  .c-nav a{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;font-size:16px;
-    letter-spacing:.01em;color:#000;text-decoration:none;text-transform:uppercase;white-space:nowrap;
-    padding:4px 0;border-bottom:2px solid transparent;transition:border-color .15s}
-  .c-nav a:hover{border-bottom-color:#000}
-  .c-actions{margin-left:auto;display:flex;align-items:center;gap:clamp(14px,1.8vw,22px)}
+  .c-logo img{width:80px;height:auto;display:block}
+  .c-nav{display:flex;align-items:center;gap:55px}
+  .c-nav a{display:block;line-height:0;padding:2px 0;transition:opacity .15s}
+  .c-nav a:hover{opacity:.55}
+  .c-nav a img{height:22px;width:auto;display:block}
+  .c-actions{margin-left:auto;display:flex;align-items:center;gap:30px}
   .c-ig{line-height:0;display:inline-flex;color:#000}
   .c-ig-img{width:26px;height:26px;display:block}
   .c-ig-svg{display:none}
@@ -1526,16 +1525,18 @@
     :root{--hh:56px}
     .c-nav{display:none}
     .c-burger{display:inline-flex}
-    .c-topbar-in{gap:12px}
-    .c-actions{gap:12px}
+    .c-topbar-in{gap:0;padding:0 10px;position:relative}
+    .c-logo img{width:auto;height:22px}
+    /* Submit an Offer — big & centered, scales up toward the 500px art, capped to avoid the side icons */
+    .c-offer{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      border:0;border-radius:0;background:none;padding:0;line-height:0}
+    .c-offer-img{display:block;width:min(900px,calc(100vw - 150px));height:auto}
+    .c-offer-txt{display:none}
+    /* right cluster hard against the right edge; Instagram sits right beside the hamburger */
+    .c-actions{margin-left:auto;gap:12px;align-items:center}
     .c-ig-img{display:none}
     .c-ig-svg{display:block;width:24px;height:24px}
-    .c-offer{border:0;border-radius:3px;background:#000;padding:8px 14px;line-height:1}
-    .c-offer-img{display:none}
-    .c-offer-txt{display:inline;font-size:12px;letter-spacing:.02em;white-space:nowrap;color:#fff}
-    .c-offer:hover{background:#000}
-    .c-offer:active{transform:translateY(1px)}
-    .c-burger img{width:26px;height:26px}
+    .c-burger img{width:28px;height:auto}
   }
   /* Overflow safety */
   html,body{overflow-x:hidden;max-width:100%}
@@ -1621,14 +1622,14 @@
   <div class="c-topbar-in">
     <a class="c-logo" href="#top" aria-label="wazawaza — top"><img src="assets/c/logo_pc.png" alt="wazawaza" /></a>
     <nav class="c-nav">
-      <a href="#overview">Statement</a>
-      <a href="#interview">Interview</a>
-      <a href="#flow">Process</a>
-      <a href="#guarantee">FAQ</a>
+      <a href="#overview" aria-label="Statement"><img src="assets/c/nav_statement_pc.png" alt="Statement" /></a>
+      <a href="#interview" aria-label="Interview"><img src="assets/c/nav_interview_pc.png" alt="Interview" /></a>
+      <a href="#flow" aria-label="Process"><img src="assets/c/nav_process_pc.png" alt="Process" /></a>
+      <a href="#guarantee" aria-label="FAQ"><img src="assets/c/nav_faq_pc.png" alt="FAQ" /></a>
     </nav>
     <div class="c-actions">
       <a class="c-ig" href="https://www.instagram.com/asano_inio/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img class="c-ig-img" src="assets/c/ig_pc.png" alt="Instagram" /><svg class="c-ig-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
-      <button type="button" class="c-offer" data-tf-popup="h2AVFX95" aria-label="Submit an Offer"><img class="c-offer-img" src="assets/c/submit_pc.png" alt="Submit an Offer" /><span class="c-offer-txt">Submit an Offer</span></button>
+      <button type="button" class="c-offer" data-tf-popup="h2AVFX95" aria-label="Submit an Offer"><picture><source media="(max-width:900px)" srcset="assets/c/submit_sp.png"><img class="c-offer-img" src="assets/c/submit_pc.png" alt="Submit an Offer" /></picture><span class="c-offer-txt">Submit an Offer</span></button>
       <button type="button" class="c-burger" id="c-burger" aria-label="Menu"><img src="assets/c/menu_sp.png" alt="Menu" /></button>
     </div>
   </div>
