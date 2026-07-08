@@ -1462,6 +1462,7 @@
   /* ─────── 01 GALLERY ─────── */
   .c-gallery{padding-top:clamp(40px,6vw,84px);padding-bottom:clamp(40px,6vw,84px)}
   .c-gal-track{display:flex;gap:16px;overflow-x:auto;scroll-behavior:auto;
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
     scrollbar-width:none;-ms-overflow-style:none;padding:2px 2px 22px}
   .c-gal-track::-webkit-scrollbar{display:none}
   .c-gal-card{flex:0 0 clamp(240px,26vw,360px);aspect-ratio:400/700;background:#000;
@@ -1550,10 +1551,12 @@
     .c-gal-card{flex-basis:78vw}
   }
   /* ===== Feedback round 1 overrides ===== */
-  /* Header sticks to the top AND occupies layout space, so the hero always begins
-     flush below it — no fixed-offset math, no overlap on any viewport/zoom. */
-  .c-topbar{position:sticky;top:0}
-  body{padding-top:0!important}
+  /* Header pinned to top on ALL viewports (fixed = reliable even with overflow
+     ancestors). The hero offset is set from the header's MEASURED height in JS
+     (--pin-h) so it's always flush, never overlapping. This !important rule is
+     later in source than the earlier body{padding-top:0!important}, so it wins. */
+  .c-topbar{position:fixed;left:0;right:0;top:0}
+  body{padding-top:var(--pin-h,66px)!important}
   .c-hero{height:auto}
 
   .sec-head{display:block!important;grid-template-columns:none!important;gap:0!important;margin-bottom:clamp(22px,3.4vw,40px)!important}
@@ -2096,28 +2099,30 @@
   })();
 </script>
 <script>
-  // Gallery: continuous manga marquee (P1 at right → drifts, loops)
+  // Gallery: gentle ambient drift on ALL devices. Pauses only while the finger/
+  // pointer is down, and resumes once scrolling has fully settled (so it never
+  // fights iOS momentum → no jumping). Tap still opens the lightbox.
   (function () {
     const track = document.getElementById('c-gal-track');
     const dotsRow = document.getElementById('c-gal-dots');
     if (!track) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dots = dotsRow ? Array.from(dotsRow.querySelectorAll('button')) : [];
+    track.querySelectorAll('img').forEach(im => { im.decoding = 'async'; });
+
+    // Duplicate the plate set once so P12 → P1 flows in seamlessly (no jump).
     const cards = Array.from(track.querySelectorAll('.c-gal-card'));
     const origCount = cards.length;
-    // Duplicate the whole plate set once so P12 → P1 flows in seamlessly (no jump).
     cards.forEach(c => { const cl = c.cloneNode(true); cl.setAttribute('data-clone', '1'); track.appendChild(cl); });
     const allCards = Array.from(track.querySelectorAll('.c-gal-card'));
-    const dots = dotsRow ? Array.from(dotsRow.querySelectorAll('button')) : [];
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let paused = false, resumeT = null, raf = null, running = false;
-    let pos = 0;                 // float scroll position (scrollLeft rounds, so track it ourselves)
-    let setW = 0;                // width of one full plate set (for seamless wrap)
-    let maxLeftVal = 0;          // cached (reading scrollWidth every frame forces layout)
-    const SPEED = 0.5;           // px per frame, slow drift
+
+    let paused = false, raf = null, running = false;
+    let pos = 0, setW = 0, maxLeftVal = 0;
+    let pointerDown = false, settleT = null;
+    const SPEED = 0.5;
 
     const maxLeft = () => track.scrollWidth - track.clientWidth;
     const computeSetW = () => { setW = allCards[origCount].offsetLeft - allCards[0].offsetLeft; maxLeftVal = maxLeft(); };
-
-    // start showing P1 (rightmost card of the FIRST set)
     const initPos = () => { computeSetW(); pos = maxLeftVal; track.scrollLeft = pos; updateActive(); };
 
     function updateActive() {
@@ -2125,11 +2130,11 @@
       const c = track.getBoundingClientRect();
       const center = c.left + c.width / 2;
       let best = allCards[0], bd = Infinity;
-      allCards.forEach(card => {
+      for (const card of allCards) {
         const r = card.getBoundingClientRect();
         const d = Math.abs(r.left + r.width / 2 - center);
         if (d < bd) { bd = d; best = card; }
-      });
+      }
       const p = best && best.getAttribute('data-p');
       dots.forEach(dt => dt.classList.toggle('active', dt.getAttribute('data-p') === p));
     }
@@ -2137,47 +2142,53 @@
     let uaTick = 0;
     function step() {
       if (!paused) {
-        pos -= SPEED;                         // drift: viewport pans left → images flow right
-        if (pos <= maxLeftVal - setW) pos += setW;  // seamless wrap into the identical duplicate set
+        pos -= SPEED;
+        if (pos <= maxLeftVal - setW) pos += setW;
         track.scrollLeft = Math.round(pos);
-        if ((uaTick++ % 10) === 0) updateActive();  // throttle dot sync (avoid per-frame layout reads)
+        if ((uaTick++ % 10) === 0) updateActive();
       }
       raf = requestAnimationFrame(step);
     }
-    function start() { if (running || reduced) return; running = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(step); }
+    function start() { if (running || reduced) return; running = true; track.style.scrollSnapType = 'none'; cancelAnimationFrame(raf); raf = requestAnimationFrame(step); }
     function stop() { running = false; cancelAnimationFrame(raf); }
 
-    const pause = (ms = 5000) => {
-      paused = true;
-      if (resumeT) clearTimeout(resumeT);
-      resumeT = setTimeout(() => { paused = false; }, ms);
-    };
+    function pauseNow() { paused = true; track.style.scrollSnapType = 'x proximity'; if (settleT) { clearTimeout(settleT); settleT = null; } }
+    function scheduleResume() {
+      // resume only after scrolling has fully stopped (debounced by scroll events)
+      if (settleT) clearTimeout(settleT);
+      settleT = setTimeout(() => { pos = track.scrollLeft; paused = false; settleT = null; track.style.scrollSnapType = 'none'; }, 280);
+    }
 
-    // dots jump to a plate
+    // pointer down anywhere on the track → hold; release → resume after settle
+    track.addEventListener('pointerdown', () => { pointerDown = true; pauseNow(); }, { passive: true });
+    track.addEventListener('touchstart', () => { pointerDown = true; pauseNow(); }, { passive: true });
+    const release = () => { if (pointerDown) { pointerDown = false; scheduleResume(); } };
+    window.addEventListener('pointerup', release, { passive: true });
+    window.addEventListener('touchend', release, { passive: true });
+    window.addEventListener('touchcancel', release, { passive: true });
+    track.addEventListener('wheel', () => { pauseNow(); if (!pointerDown) scheduleResume(); }, { passive: true });
+    // While drifting, step() updates dots (throttled). Only do work here for
+    // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
+    track.addEventListener('scroll', () => { if (paused) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
+
+    // dots jump to a plate, then resume drift
     dots.forEach(dt => {
       dt.addEventListener('click', () => {
-        pause();
+        pauseNow();
         const p = dt.getAttribute('data-p');
         const card = cards.find(c => c.getAttribute('data-p') === p);
         if (card) {
           const target = card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
-          pos = Math.max(0, Math.min(maxLeft(), target));
-          track.scrollTo({ left: pos, behavior: 'smooth' });
+          track.scrollTo({ left: Math.max(0, Math.min(maxLeft(), target)), behavior: 'smooth' });
         }
-        setTimeout(updateActive, 60);
+        scheduleResume();
       });
     });
-
-    // pause while the user interacts
-    ['pointerdown','touchstart','wheel'].forEach(ev =>
-      track.addEventListener(ev, () => pause(), { passive: true }));
-    let idle; track.addEventListener('scroll', () => { clearTimeout(idle); idle = setTimeout(() => { pos = track.scrollLeft; updateActive(); }, 60); }, { passive: true });
 
     const boot = () => { initPos(); start(); };
     if (document.readyState === 'complete') requestAnimationFrame(boot);
     else window.addEventListener('load', () => requestAnimationFrame(boot));
     window.addEventListener('resize', () => { computeSetW(); if (pos > maxLeftVal) pos = maxLeftVal; });
-    // Pause the animation loop whenever the gallery is off-screen (major scroll-perf win)
     if ('IntersectionObserver' in window) {
       const secObs = new IntersectionObserver(function (ents) {
         ents.forEach(function (e) { if (e.isIntersecting) start(); else stop(); });
@@ -3516,6 +3527,19 @@
 
 <!-- Typeform popup embed (Submit an Offer button) -->
 <script src="https://embed.typeform.com/next/embed.js"></script>
+<script>
+  /* Pin-header offset: fixed header is out of flow, so reserve exactly its
+     measured height as body padding — flush hero on every width/zoom. */
+  (function(){
+    var header=document.querySelector('.c-topbar');
+    if(!header) return;
+    function sync(){ document.body.style.setProperty('--pin-h', header.offsetHeight + 'px'); }
+    sync();
+    window.addEventListener('load', sync);
+    window.addEventListener('resize', sync);
+    if('ResizeObserver' in window){ new ResizeObserver(sync).observe(header); }
+  })();
+</script>
 <template id="__bundler_thumbnail" data-bg-color="#FFE000"><svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="800" fill="#FFE000"/><text x="600" y="470" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="300" fill="#111" text-anchor="middle" letter-spacing="-10">戦</text><text x="600" y="600" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="90" fill="#e81878" text-anchor="middle" letter-spacing="6">IKUSA</text></svg></template>
 </body>
 
