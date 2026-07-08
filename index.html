@@ -256,14 +256,14 @@
   .specs-sched{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:24px;
     padding-top:24px;border-top:1px solid var(--rule);max-width:760px;margin-left:auto;margin-right:auto}
   .specs-sched > div{display:flex;flex-direction:column;gap:8px;text-align:center;align-items:center}
-  .specs-sched .k{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.2em;
+  .specs-sched .k{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.2em;
     text-transform:uppercase;color:var(--accent-deep)}
-  .specs-sched .v{font-family:var(--serif-en);font-style:italic;font-weight:600;font-size:22px;
-    color:var(--ink);letter-spacing:.01em;line-height:1.2}
-  [data-lang="ja"] .specs-sched .v{font-family:var(--serif-jp);font-style:normal;font-size:19px}
-  .specs-sched .note{font-family:var(--serif-jp);font-weight:400;font-size:13px;color:var(--ink-3);
-    line-height:1.7;max-width:34ch;text-wrap:pretty}
-  [data-lang="en"] .specs-sched .note{font-family:var(--serif-en);font-size:13px}
+  .specs-sched .v{font-family:var(--serif-en);font-style:italic;font-weight:600;font-size:84px;
+    color:var(--ink);letter-spacing:.01em;line-height:1.1}
+  [data-lang="ja"] .specs-sched .v{font-family:var(--serif-jp);font-style:normal;font-size:72px}
+  .specs-sched .note{font-family:var(--serif-jp);font-weight:400;font-size:15px;color:var(--ink-3);
+    line-height:1.7;max-width:36ch;text-wrap:pretty}
+  [data-lang="en"] .specs-sched .note{font-family:var(--serif-en);font-size:15px}
 
   @media (max-width:820px){
     .ikusa-title{font-size:84px;gap:16px}
@@ -283,8 +283,8 @@
     .specs-sub .v{text-align:right}
     .specs-sched{grid-template-columns:1fr;gap:0;margin-top:0;padding-top:0;border-top:0}
     .specs-sched > div{text-align:center;align-items:center;gap:7px;padding:16px 0;border-top:1px solid var(--rule)}
-    .specs-sched .v{font-size:18px}
-    [data-lang="ja"] .specs-sched .v{font-size:17px}
+    .specs-sched .v{font-size:48px}
+    [data-lang="ja"] .specs-sched .v{font-size:40px}
     .specs-sched .note{max-width:none}
   }
 
@@ -1734,7 +1734,7 @@
     </div>
     <div class="c-spec-sched reveal">
       <div><span class="k">Application Window</span><span class="v">July – August 2026</span><span class="note"><br>A two-month application window.</span></div>
-      <div><span class="k">Shipping Schedule</span><span class="v">Oct 2026 – Dec 2027</span><span class="note"><br>Ship dates vary by serial number. Each buyer is contacted individually.</span></div>
+      <div><span class="k">Shipping Schedule</span><span class="v">Oct 2026 – Dec 2027</span><span class="note"><br>Ship dates vary by serial number.<br>Each buyer is contacted individually.</span></div>
     </div>
   </div>
 </section>
