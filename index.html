@@ -2163,7 +2163,7 @@
       }
       raf = requestAnimationFrame(step);
     }
-    function start() { if (running || reduced) return; running = true; track.style.scrollSnapType = 'none'; cancelAnimationFrame(raf); raf = requestAnimationFrame(step); }
+    function start() { if (running || reduced) return; computeSetW(); running = true; track.style.scrollSnapType = 'none'; cancelAnimationFrame(raf); raf = requestAnimationFrame(step); }
     function stop() { running = false; cancelAnimationFrame(raf); }
 
     function pauseNow() { paused = true; track.style.scrollSnapType = 'x proximity'; if (settleT) { clearTimeout(settleT); settleT = null; } }
@@ -2257,6 +2257,11 @@
     const boot = () => { initPos(); start(); };
     if (document.readyState === 'complete') requestAnimationFrame(boot);
     else window.addEventListener('load', () => requestAnimationFrame(boot));
+    // Re-measure after late layout settles (fonts / clamp+vw / deployed timing) so the
+    // dot-detection stride & first-card center are always based on the true rendered size.
+    const remeasure = () => { const p0 = pos, m0 = maxLeftVal; computeSetW(); if (m0 > 0 && Math.abs(maxLeftVal - m0) > 0.5) { pos = Math.max(0, Math.min(maxLeftVal, p0)); } lastActiveIdx = -1; };
+    [400, 1000, 2200].forEach(d => setTimeout(remeasure, d));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
     window.addEventListener('resize', () => { computeSetW(); if (pos > maxLeftVal) pos = maxLeftVal; });
     if ('IntersectionObserver' in window) {
       const secObs = new IntersectionObserver(function (ents) {
