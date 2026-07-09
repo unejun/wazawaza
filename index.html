@@ -2123,20 +2123,25 @@
     const SPEED = 0.5;
 
     const maxLeft = () => track.scrollWidth - track.clientWidth;
-    const computeSetW = () => { setW = allCards[origCount].offsetLeft - allCards[0].offsetLeft; maxLeftVal = maxLeft(); };
+    let cardStride = 0, firstCenter = 0, lastActiveP = null;
+    const computeSetW = () => {
+      setW = allCards[origCount].offsetLeft - allCards[0].offsetLeft;
+      maxLeftVal = maxLeft();
+      cardStride = setW / origCount;                                  // even spacing per card
+      firstCenter = allCards[0].offsetLeft + allCards[0].offsetWidth / 2;
+    };
     const initPos = () => { computeSetW(); pos = maxLeftVal; track.scrollLeft = pos; updateActive(); };
 
+    // O(1) active-dot detection from scrollLeft arithmetic — NO per-frame rect reads,
+    // so the drift loop stays cheap and never fights page scrolling.
     function updateActive() {
-      if (!dots.length) return;
-      const c = track.getBoundingClientRect();
-      const center = c.left + c.width / 2;
-      let best = allCards[0], bd = Infinity;
-      for (const card of allCards) {
-        const r = card.getBoundingClientRect();
-        const d = Math.abs(r.left + r.width / 2 - center);
-        if (d < bd) { bd = d; best = card; }
-      }
-      const p = best && best.getAttribute('data-p');
+      if (!dots.length || !cardStride) return;
+      const centerX = track.scrollLeft + track.clientWidth / 2;
+      let idx = Math.round((centerX - firstCenter) / cardStride);
+      if (idx < 0) idx = 0; else if (idx >= allCards.length) idx = allCards.length - 1;
+      const p = allCards[idx].getAttribute('data-p');
+      if (p === lastActiveP) return;                                  // skip DOM writes when unchanged
+      lastActiveP = p;
       dots.forEach(dt => dt.classList.toggle('active', dt.getAttribute('data-p') === p));
     }
 
@@ -2154,6 +2159,25 @@
     function stop() { running = false; cancelAnimationFrame(raf); }
 
     function pauseNow() { paused = true; track.style.scrollSnapType = 'x proximity'; if (settleT) { clearTimeout(settleT); settleT = null; } }
+
+    // Custom rAF tween so the "jump to a plate" glide is smooth in EVERY browser
+    // (native scroll-behavior:smooth is unreliable / instant in some engines).
+    let tweenRaf = null;
+    function animateTo(targetLeft, duration, onDone) {
+      if (tweenRaf) cancelAnimationFrame(tweenRaf);
+      const startLeft = track.scrollLeft;
+      const delta = targetLeft - startLeft;
+      if (Math.abs(delta) < 1) { track.scrollLeft = targetLeft; onDone && onDone(); return; }
+      const t0 = performance.now();
+      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // easeInOutCubic
+      const frame = (now) => {
+        let k = (now - t0) / duration;
+        if (k >= 1) { track.scrollLeft = Math.round(targetLeft); tweenRaf = null; onDone && onDone(); return; }
+        track.scrollLeft = Math.round(startLeft + delta * ease(k));
+        tweenRaf = requestAnimationFrame(frame);
+      };
+      tweenRaf = requestAnimationFrame(frame);
+    }
     function scheduleResume() {
       // resume only after scrolling has fully stopped (debounced by scroll events)
       if (settleT) clearTimeout(settleT);
@@ -2161,13 +2185,14 @@
     }
 
     // pointer down anywhere on the track → hold; release → resume after settle
-    track.addEventListener('pointerdown', () => { pointerDown = true; pauseNow(); }, { passive: true });
-    track.addEventListener('touchstart', () => { pointerDown = true; pauseNow(); }, { passive: true });
+    const cancelTween = () => { if (tweenRaf) { cancelAnimationFrame(tweenRaf); tweenRaf = null; } clickHold = false; };
+    track.addEventListener('pointerdown', () => { cancelTween(); pointerDown = true; pauseNow(); }, { passive: true });
+    track.addEventListener('touchstart', () => { cancelTween(); pointerDown = true; pauseNow(); }, { passive: true });
     const release = () => { if (pointerDown) { pointerDown = false; scheduleResume(); } };
     window.addEventListener('pointerup', release, { passive: true });
     window.addEventListener('touchend', release, { passive: true });
     window.addEventListener('touchcancel', release, { passive: true });
-    track.addEventListener('wheel', () => { pauseNow(); if (!pointerDown) scheduleResume(); }, { passive: true });
+    track.addEventListener('wheel', () => { cancelTween(); pauseNow(); if (!pointerDown) scheduleResume(); }, { passive: true });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
     track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
@@ -2181,22 +2206,40 @@
         // Authoritatively highlight the CLICKED dot — never let center-detection
         // (which can tie to a neighbor on some render environments) override it.
         dots.forEach(d => d.classList.toggle('active', d === dt));
+        lastActiveP = p;
         const cur = track.scrollLeft;
+        const ml = maxLeft();
+        const winCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
+        // Compute the EXACT centered scroll position from each instance's real
+        // rendered rect (robust across browsers) so a single smooth scroll lands
+        // dead-center with no post-correction jump. Prefer a reachable instance.
         let bestTarget = null, bestDist = Infinity;
+        let bestAnyTarget = null, bestAnyDist = Infinity;
         allCards.forEach(c => {
           if (c.getAttribute('data-p') !== p) return;
-          const t = c.offsetLeft - (track.clientWidth - c.offsetWidth) / 2;
-          const clamped = Math.max(0, Math.min(maxLeft(), t));
-          const d = Math.abs(clamped - cur);
-          if (d < bestDist) { bestDist = d; bestTarget = clamped; }
+          const r = c.getBoundingClientRect();
+          const cardCenter = r.left + r.width / 2;
+          const want = cur + (cardCenter - winCenter); // exact scrollLeft to center this instance
+          const clamped = Math.max(0, Math.min(ml, want));
+          const dAny = Math.abs(clamped - cur);
+          if (dAny < bestAnyDist) { bestAnyDist = dAny; bestAnyTarget = clamped; }
+          // reachable = the exact centered position isn't clamped away
+          if (want >= -1 && want <= ml + 1) {
+            const d = Math.abs(want - cur);
+            if (d < bestDist) { bestDist = d; bestTarget = want; }
+          }
         });
+        if (bestTarget == null) bestTarget = bestAnyTarget;
         if (bestTarget != null) {
           clickHold = true;
           track.style.scrollSnapType = 'none'; // land exactly on target — no proximity snap nudging to a neighbor
-          track.scrollTo({ left: bestTarget, behavior: 'smooth' });
-          // hold on the clicked plate for a visible beat, then resume drift
-          if (settleT) clearTimeout(settleT);
-          settleT = setTimeout(() => { clickHold = false; pos = track.scrollLeft; paused = false; settleT = null; track.style.scrollSnapType = 'none'; }, 1400);
+          const dist = Math.abs(bestTarget - cur);
+          const dur = Math.max(320, Math.min(760, dist * 0.6)); // scale glide time with distance
+          animateTo(Math.round(bestTarget), dur, () => {
+            // hold on the clicked plate for a visible beat, then resume drift
+            if (settleT) clearTimeout(settleT);
+            settleT = setTimeout(() => { clickHold = false; pos = track.scrollLeft; paused = false; settleT = null; track.style.scrollSnapType = 'none'; }, 2000);
+          });
         } else {
           scheduleResume();
         }
