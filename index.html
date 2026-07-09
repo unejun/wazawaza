@@ -2123,7 +2123,7 @@
     const SPEED = 0.5;
 
     const maxLeft = () => track.scrollWidth - track.clientWidth;
-    let cardStride = 0, firstCenter = 0, lastActiveP = null;
+    let cardStride = 0, firstCenter = 0, lastActiveP = null, lastActiveIdx = -1;
     const computeSetW = () => {
       setW = allCards[origCount].offsetLeft - allCards[0].offsetLeft;
       maxLeftVal = maxLeft();
@@ -2132,13 +2132,21 @@
     };
     const initPos = () => { computeSetW(); pos = maxLeftVal; track.scrollLeft = pos; updateActive(); };
 
-    // O(1) active-dot detection from scrollLeft arithmetic — NO per-frame rect reads,
-    // so the drift loop stays cheap and never fights page scrolling.
+    // O(1) active-dot detection from scrollLeft arithmetic — NO per-frame rect reads.
+    // Hysteresis: keep the current plate highlighted until the NEXT plate has moved
+    // well into the center (fractional index within 0.32 of it), so the dot switches
+    // only when the incoming image is genuinely centered — not the instant it's nearest.
     function updateActive() {
       if (!dots.length || !cardStride) return;
       const centerX = track.scrollLeft + track.clientWidth / 2;
-      let idx = Math.round((centerX - firstCenter) / cardStride);
+      const f = (centerX - firstCenter) / cardStride;                 // fractional plate index
+      let idx = Math.round(f);
       if (idx < 0) idx = 0; else if (idx >= allCards.length) idx = allCards.length - 1;
+      if (lastActiveIdx >= 0 && idx !== lastActiveIdx) {
+        // only accept the switch once the new plate is clearly centered
+        if (Math.abs(f - idx) > 0.15) return;
+      }
+      lastActiveIdx = idx;
       const p = allCards[idx].getAttribute('data-p');
       if (p === lastActiveP) return;                                  // skip DOM writes when unchanged
       lastActiveP = p;
@@ -2206,7 +2214,7 @@
         // Authoritatively highlight the CLICKED dot — never let center-detection
         // (which can tie to a neighbor on some render environments) override it.
         dots.forEach(d => d.classList.toggle('active', d === dt));
-        lastActiveP = p;
+        lastActiveP = p; lastActiveIdx = -1;
         const cur = track.scrollLeft;
         const ml = maxLeft();
         const winCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
