@@ -2124,27 +2124,32 @@
 
     const maxLeft = () => track.scrollWidth - track.clientWidth;
     let cardStride = 0, firstCenter = 0, lastActiveP = null, lastActiveIdx = -1;
+    let cardCenters = [];
     const computeSetW = () => {
       setW = allCards[origCount].offsetLeft - allCards[0].offsetLeft;
       maxLeftVal = maxLeft();
       cardStride = setW / origCount;                                  // even spacing per card
       firstCenter = allCards[0].offsetLeft + allCards[0].offsetWidth / 2;
+      // exact rendered center of every card (offsetLeft-based → matches real layout in any browser)
+      cardCenters = allCards.map(c => c.offsetLeft + c.offsetWidth / 2);
     };
     const initPos = () => { computeSetW(); pos = maxLeftVal; track.scrollLeft = pos; updateActive(); };
 
-    // O(1) active-dot detection from scrollLeft arithmetic — NO per-frame rect reads.
-    // Hysteresis: keep the current plate highlighted until the NEXT plate has moved
-    // well into the center (fractional index within 0.32 of it), so the dot switches
-    // only when the incoming image is genuinely centered — not the instant it's nearest.
+    // O(cards) numeric (NO rect reads) active-dot detection using each card's exact
+    // rendered center, so it matches what the user actually sees in every environment.
+    // Hysteresis: only switch to a new plate once it is within ~15% of a card-stride
+    // from dead-center (i.e. it has clearly moved INTO the middle) — never the instant
+    // it becomes merely "nearest".
     function updateActive() {
-      if (!dots.length || !cardStride) return;
+      if (!dots.length || !cardCenters.length) return;
       const centerX = track.scrollLeft + track.clientWidth / 2;
-      const f = (centerX - firstCenter) / cardStride;                 // fractional plate index
-      let idx = Math.round(f);
-      if (idx < 0) idx = 0; else if (idx >= allCards.length) idx = allCards.length - 1;
+      let idx = 0, bd = Infinity;
+      for (let i = 0; i < cardCenters.length; i++) {
+        const d = Math.abs(centerX - cardCenters[i]);
+        if (d < bd) { bd = d; idx = i; }
+      }
       if (lastActiveIdx >= 0 && idx !== lastActiveIdx) {
-        // only accept the switch once the new plate is clearly centered
-        if (Math.abs(f - idx) > 0.15) return;
+        if (bd > cardStride * 0.15) return;                           // new plate not centered enough yet
       }
       lastActiveIdx = idx;
       const p = allCards[idx].getAttribute('data-p');
@@ -2200,7 +2205,13 @@
     window.addEventListener('pointerup', release, { passive: true });
     window.addEventListener('touchend', release, { passive: true });
     window.addEventListener('touchcancel', release, { passive: true });
-    track.addEventListener('wheel', () => { cancelTween(); pauseNow(); if (!pointerDown) scheduleResume(); }, { passive: true });
+    track.addEventListener('wheel', (e) => {
+      // Only a HORIZONTAL wheel (intent to scroll the gallery) pauses the drift.
+      // A vertical wheel is the user scrolling the PAGE — ignore it so hovering the
+      // gallery while page-scrolling never stalls the marquee.
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      cancelTween(); pauseNow(); if (!pointerDown) scheduleResume();
+    }, { passive: true });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
     track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
@@ -2214,30 +2225,33 @@
         // Authoritatively highlight the CLICKED dot — never let center-detection
         // (which can tie to a neighbor on some render environments) override it.
         dots.forEach(d => d.classList.toggle('active', d === dt));
-        lastActiveP = p; lastActiveIdx = -1;
+        lastActiveP = p;
         const cur = track.scrollLeft;
         const ml = maxLeft();
         const winCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
         // Compute the EXACT centered scroll position from each instance's real
         // rendered rect (robust across browsers) so a single smooth scroll lands
         // dead-center with no post-correction jump. Prefer a reachable instance.
-        let bestTarget = null, bestDist = Infinity;
-        let bestAnyTarget = null, bestAnyDist = Infinity;
-        allCards.forEach(c => {
+        let bestTarget = null, bestDist = Infinity, bestIdx = -1;
+        let bestAnyTarget = null, bestAnyDist = Infinity, bestAnyIdx = -1;
+        allCards.forEach((c, i) => {
           if (c.getAttribute('data-p') !== p) return;
           const r = c.getBoundingClientRect();
           const cardCenter = r.left + r.width / 2;
           const want = cur + (cardCenter - winCenter); // exact scrollLeft to center this instance
           const clamped = Math.max(0, Math.min(ml, want));
           const dAny = Math.abs(clamped - cur);
-          if (dAny < bestAnyDist) { bestAnyDist = dAny; bestAnyTarget = clamped; }
+          if (dAny < bestAnyDist) { bestAnyDist = dAny; bestAnyTarget = clamped; bestAnyIdx = i; }
           // reachable = the exact centered position isn't clamped away
           if (want >= -1 && want <= ml + 1) {
             const d = Math.abs(want - cur);
-            if (d < bestDist) { bestDist = d; bestTarget = want; }
+            if (d < bestDist) { bestDist = d; bestTarget = want; bestIdx = i; }
           }
         });
-        if (bestTarget == null) bestTarget = bestAnyTarget;
+        if (bestTarget == null) { bestTarget = bestAnyTarget; bestIdx = bestAnyIdx; }
+        // Seed hysteresis with the centered instance so the dot holds from the first
+        // resume frame (prevents an immediate off-by-one jump on some environments).
+        if (bestIdx >= 0) lastActiveIdx = bestIdx;
         if (bestTarget != null) {
           clickHold = true;
           track.style.scrollSnapType = 'none'; // land exactly on target — no proximity snap nudging to a neighbor
@@ -2307,9 +2321,10 @@
     const cl = document.getElementById('lb-close');
     const track = document.getElementById('c-gal-track');
     if (!lb || !track) return;
-    let downX = 0, downY = 0, moved = false;
-    track.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; moved = false; }, { passive: true });
-    track.addEventListener('pointermove', (e) => { if (Math.abs(e.clientX - downX) > 8 || Math.abs(e.clientY - downY) > 8) moved = true; }, { passive: true });
+    let downX = 0, downY = 0, moved = false, lbDown = false;
+    track.addEventListener('pointerdown', (e) => { lbDown = true; downX = e.clientX; downY = e.clientY; moved = false; }, { passive: true });
+    track.addEventListener('pointermove', (e) => { if (!lbDown) return; if (Math.abs(e.clientX - downX) > 8 || Math.abs(e.clientY - downY) > 8) moved = true; }, { passive: true });
+    window.addEventListener('pointerup', () => { lbDown = false; }, { passive: true });
     let lockedY = 0;
     const lockScroll = () => {
       lockedY = window.scrollY || window.pageYOffset || 0;
