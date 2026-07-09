@@ -2189,6 +2189,7 @@
         });
         if (bestTarget != null) {
           clickHold = true;
+          track.style.scrollSnapType = 'none'; // land exactly on target — no proximity snap nudging to a neighbor
           track.scrollTo({ left: bestTarget, behavior: 'smooth' });
           // hold on the clicked plate for a visible beat, then resume drift
           if (settleT) clearTimeout(settleT);
