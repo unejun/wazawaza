@@ -2119,7 +2119,7 @@
 
     let paused = false, raf = null, running = false;
     let pos = 0, setW = 0, maxLeftVal = 0;
-    let pointerDown = false, settleT = null;
+    let pointerDown = false, settleT = null, clickHold = false;
     const SPEED = 0.5;
 
     const maxLeft = () => track.scrollWidth - track.clientWidth;
@@ -2170,19 +2170,32 @@
     track.addEventListener('wheel', () => { pauseNow(); if (!pointerDown) scheduleResume(); }, { passive: true });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
-    track.addEventListener('scroll', () => { if (paused) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
+    track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } else if (paused) { updateActive(); } }, { passive: true });
 
-    // dots jump to a plate, then resume drift
+    // dots jump to the NEAREST instance of that plate (originals + clones exist for
+    // the infinite loop) so the move is always the shortest path — never a full loop.
     dots.forEach(dt => {
       dt.addEventListener('click', () => {
         pauseNow();
         const p = dt.getAttribute('data-p');
-        const card = cards.find(c => c.getAttribute('data-p') === p);
-        if (card) {
-          const target = card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
-          track.scrollTo({ left: Math.max(0, Math.min(maxLeft(), target)), behavior: 'smooth' });
+        const cur = track.scrollLeft;
+        let bestTarget = null, bestDist = Infinity;
+        allCards.forEach(c => {
+          if (c.getAttribute('data-p') !== p) return;
+          const t = c.offsetLeft - (track.clientWidth - c.offsetWidth) / 2;
+          const clamped = Math.max(0, Math.min(maxLeft(), t));
+          const d = Math.abs(clamped - cur);
+          if (d < bestDist) { bestDist = d; bestTarget = clamped; }
+        });
+        if (bestTarget != null) {
+          clickHold = true;
+          track.scrollTo({ left: bestTarget, behavior: 'smooth' });
+          // hold on the clicked plate for a visible beat, then resume drift
+          if (settleT) clearTimeout(settleT);
+          settleT = setTimeout(() => { clickHold = false; pos = track.scrollLeft; paused = false; settleT = null; track.style.scrollSnapType = 'none'; updateActive(); }, 1400);
+        } else {
+          scheduleResume();
         }
-        scheduleResume();
       });
     });
 
@@ -2237,6 +2250,25 @@
     let downX = 0, downY = 0, moved = false;
     track.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; moved = false; }, { passive: true });
     track.addEventListener('pointermove', (e) => { if (Math.abs(e.clientX - downX) > 8 || Math.abs(e.clientY - downY) > 8) moved = true; }, { passive: true });
+    let lockedY = 0;
+    const lockScroll = () => {
+      lockedY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = (-lockedY) + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    };
+    const unlockScroll = () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, lockedY);
+    };
     track.addEventListener('click', (e) => {
       if (moved) return;
       const card = e.target.closest('.c-gal-card');
@@ -2247,9 +2279,12 @@
       img.src = src;
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+      lockScroll();
     });
-    const close = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; img.removeAttribute('src'); };
+    // block background scroll from wheel / touch while the lightbox is open
+    lb.addEventListener('wheel', (e) => { e.preventDefault(); }, { passive: false });
+    lb.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+    const close = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); unlockScroll(); img.removeAttribute('src'); };
     cl && cl.addEventListener('click', close);
     lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
