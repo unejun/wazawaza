@@ -2170,7 +2170,7 @@
     track.addEventListener('wheel', () => { pauseNow(); if (!pointerDown) scheduleResume(); }, { passive: true });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
-    track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } else if (paused) { updateActive(); } }, { passive: true });
+    track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
 
     // dots jump to the NEAREST instance of that plate (originals + clones exist for
     // the infinite loop) so the move is always the shortest path — never a full loop.
@@ -2178,6 +2178,9 @@
       dt.addEventListener('click', () => {
         pauseNow();
         const p = dt.getAttribute('data-p');
+        // Authoritatively highlight the CLICKED dot — never let center-detection
+        // (which can tie to a neighbor on some render environments) override it.
+        dots.forEach(d => d.classList.toggle('active', d === dt));
         const cur = track.scrollLeft;
         let bestTarget = null, bestDist = Infinity;
         allCards.forEach(c => {
@@ -2193,7 +2196,7 @@
           track.scrollTo({ left: bestTarget, behavior: 'smooth' });
           // hold on the clicked plate for a visible beat, then resume drift
           if (settleT) clearTimeout(settleT);
-          settleT = setTimeout(() => { clickHold = false; pos = track.scrollLeft; paused = false; settleT = null; track.style.scrollSnapType = 'none'; updateActive(); }, 1400);
+          settleT = setTimeout(() => { clickHold = false; pos = track.scrollLeft; paused = false; settleT = null; track.style.scrollSnapType = 'none'; }, 1400);
         } else {
           scheduleResume();
         }
