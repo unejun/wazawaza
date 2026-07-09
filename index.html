@@ -2125,6 +2125,7 @@
     const maxLeft = () => track.scrollWidth - track.clientWidth;
     let cardStride = 0, firstCenter = 0, lastActiveP = null, lastActiveIdx = -1;
     let cardCenters = [];
+    let anchorIdx = -1, anchorCenterX = 0;   // set on dot-click: relative detection base
     const computeSetW = () => {
       setW = allCards[origCount].offsetLeft - allCards[0].offsetLeft;
       maxLeftVal = maxLeft();
@@ -2143,13 +2144,26 @@
     function updateActive() {
       if (!dots.length || !cardCenters.length) return;
       const centerX = track.scrollLeft + track.clientWidth / 2;
-      let idx = 0, bd = Infinity;
-      for (let i = 0; i < cardCenters.length; i++) {
-        const d = Math.abs(centerX - cardCenters[i]);
-        if (d < bd) { bd = d; idx = i; }
-      }
-      if (lastActiveIdx >= 0 && idx !== lastActiveIdx) {
-        if (bd > cardStride * 0.15) return;                           // new plate not centered enough yet
+      let idx, bd;
+      if (anchorIdx >= 0 && cardStride) {
+        // Relative to the click-centered anchor (immune to absolute-measurement drift
+        // across browsers): the dot advances exactly one plate per stride travelled.
+        const f = anchorIdx + (centerX - anchorCenterX) / cardStride;
+        idx = Math.round(f);
+        if (idx < 0) idx = 0; else if (idx >= cardCenters.length) idx = cardCenters.length - 1;
+        if (lastActiveIdx >= 0 && idx !== lastActiveIdx) {
+          if (Math.abs(f - idx) > 0.15) return;                       // next plate not centered enough yet
+        }
+      } else {
+        // Absolute nearest — used for touch/swipe drift (no anchor).
+        idx = 0; bd = Infinity;
+        for (let i = 0; i < cardCenters.length; i++) {
+          const d = Math.abs(centerX - cardCenters[i]);
+          if (d < bd) { bd = d; idx = i; }
+        }
+        if (lastActiveIdx >= 0 && idx !== lastActiveIdx) {
+          if (bd > cardStride * 0.15) return;
+        }
       }
       lastActiveIdx = idx;
       const p = allCards[idx].getAttribute('data-p');
@@ -2198,7 +2212,7 @@
     }
 
     // pointer down anywhere on the track → hold; release → resume after settle
-    const cancelTween = () => { if (tweenRaf) { cancelAnimationFrame(tweenRaf); tweenRaf = null; } clickHold = false; };
+    const cancelTween = () => { if (tweenRaf) { cancelAnimationFrame(tweenRaf); tweenRaf = null; } clickHold = false; anchorIdx = -1; };
     track.addEventListener('pointerdown', () => { cancelTween(); pointerDown = true; pauseNow(); }, { passive: true });
     track.addEventListener('touchstart', () => { cancelTween(); pointerDown = true; pauseNow(); }, { passive: true });
     const release = () => { if (pointerDown) { pointerDown = false; scheduleResume(); } };
@@ -2251,7 +2265,7 @@
         if (bestTarget == null) { bestTarget = bestAnyTarget; bestIdx = bestAnyIdx; }
         // Seed hysteresis with the centered instance so the dot holds from the first
         // resume frame (prevents an immediate off-by-one jump on some environments).
-        if (bestIdx >= 0) lastActiveIdx = bestIdx;
+        if (bestIdx >= 0) { lastActiveIdx = bestIdx; anchorIdx = bestIdx; anchorCenterX = bestTarget + track.clientWidth / 2; }
         if (bestTarget != null) {
           clickHold = true;
           track.style.scrollSnapType = 'none'; // land exactly on target — no proximity snap nudging to a neighbor
