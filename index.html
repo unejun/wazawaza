@@ -1755,7 +1755,7 @@
 <section class="sec c-gallery" id="gallery">
   <div class="wrap">
     <h2 class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_01_sp.png"><img class="c-sechead-img" src="assets/c/title_01_gallery_pc.png" alt="01 GALLERY"></picture></h2>
-    <div class="c-gal-track" id="c-gal-track">
+    <div class="c-gal-track" id="c-gal-track" tabindex="0" role="group" aria-label="IKUSA gallery images (scroll horizontally)">
       <figure class="c-gal-card" data-p="12"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_12.png"><img src="assets/c/g_pc_12.png" data-galimg="1" alt="IKUSA plate 12"></picture></figure>
       <figure class="c-gal-card" data-p="11"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_11.png"><img src="assets/c/g_pc_11.png" data-galimg="1" alt="IKUSA plate 11"></picture></figure>
       <figure class="c-gal-card" data-p="10"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_10.png"><img src="assets/c/g_pc_10.png" data-galimg="1" alt="IKUSA plate 10"></picture></figure>
@@ -1769,7 +1769,7 @@
       <figure class="c-gal-card" data-p="2"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_02.png"><img src="assets/c/g_pc_02.png" data-galimg="1" alt="IKUSA plate 02"></picture></figure>
       <figure class="c-gal-card" data-p="1"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_01.png"><img src="assets/c/g_pc_01.png" data-galimg="1" alt="IKUSA plate 01"></picture></figure>
     </div>
-    <div class="c-gal-dots" id="c-gal-dots" role="tablist" aria-label="Gallery navigation">
+    <div class="c-gal-dots" id="c-gal-dots" role="group" aria-label="Gallery navigation">
         <button type="button" data-p="12" aria-label="Plate 12"><span class="d"></span><span class="num">P12</span></button>
         <button type="button" data-p="11" aria-label="Plate 11"><span class="d"></span><span class="num">P11</span></button>
         <button type="button" data-p="10" aria-label="Plate 10"><span class="d"></span><span class="num">P10</span></button>
@@ -1781,7 +1781,7 @@
         <button type="button" data-p="4" aria-label="Plate 04"><span class="d"></span><span class="num">P4</span></button>
         <button type="button" data-p="3" aria-label="Plate 03"><span class="d"></span><span class="num">P3</span></button>
         <button type="button" data-p="2" aria-label="Plate 02"><span class="d"></span><span class="num">P2</span></button>
-        <button type="button" data-p="1" class="active" aria-label="Plate 01"><span class="d"></span><span class="num">P1</span></button>
+        <button type="button" data-p="1" class="active" aria-current="true" aria-label="Plate 01"><span class="d"></span><span class="num">P1</span></button>
     </div>
   </div>
 </section>
@@ -2248,7 +2248,7 @@
       const p = allCards[idx].getAttribute('data-p');
       if (p === lastActiveP) return;                                  // skip DOM writes when unchanged
       lastActiveP = p;
-      dots.forEach(dt => dt.classList.toggle('active', dt.getAttribute('data-p') === p));
+      dots.forEach(dt => { const on = dt.getAttribute('data-p') === p; dt.classList.toggle('active', on); if (on) dt.setAttribute('aria-current', 'true'); else dt.removeAttribute('aria-current'); });
     }
 
     let uaTick = 0;
@@ -2305,6 +2305,12 @@
       if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
       cancelTween(); pauseNow(); if (!pointerDown) scheduleResume();
     }, { passive: true });
+    // keyboard: Arrow / Home / End / PageUp-Down on the focused track scroll it
+    // natively; pause the drift so the browser scroll isn't overwritten each frame.
+    track.addEventListener('keydown', (e) => {
+      if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown'].indexOf(e.key) === -1) return;
+      cancelTween(); pauseNow(); scheduleResume();
+    }, { passive: true });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
     track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
@@ -2317,7 +2323,7 @@
         const p = dt.getAttribute('data-p');
         // Authoritatively highlight the CLICKED dot — never let center-detection
         // (which can tie to a neighbor on some render environments) override it.
-        dots.forEach(d => d.classList.toggle('active', d === dt));
+        dots.forEach(d => { d.classList.toggle('active', d === dt); if (d === dt) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
         lastActiveP = p;
         const cur = track.scrollLeft;
         const ml = maxLeft();
@@ -2575,13 +2581,13 @@
     .legal-sheet{width:100%;height:100dvh;max-height:100dvh;border-radius:0}
   }
 </style>
-<div class="legal-overlay" id="legal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+<div class="legal-overlay" id="legal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="legal-title">
   <div class="legal-sheet">
     <div class="legal-bar">
       <span class="t" id="legal-title">Legal</span>
       <button class="legal-close" id="legal-close" type="button" aria-label="Close">×</button>
     </div>
-    <div class="legal-frame" id="legal-host"></div>
+    <div class="legal-frame" id="legal-host" tabindex="0" role="document"></div>
   </div>
 </div>
 <script>
@@ -2594,6 +2600,24 @@
     const closeBtn = document.getElementById('legal-close');
     if (!overlay || !host) return;
     let shadow = null;
+    let lastTrigger = null;
+    // Make everything except the dialog inert + hidden from AT while open
+    // (traps focus in the modal and removes background links from the a11y tree).
+    const setBackground = (hide) => {
+      Array.prototype.forEach.call(document.body.children, (el) => {
+        if (el === overlay || el.tagName === 'SCRIPT' || el.tagName === 'TEMPLATE' || el.tagName === 'STYLE') return;
+        if (hide) {
+          if (!el.hasAttribute('data-legal-pa')) el.setAttribute('data-legal-pa', el.getAttribute('aria-hidden') || '');
+          el.setAttribute('aria-hidden', 'true');
+          el.setAttribute('inert', '');
+        } else {
+          const pa = el.getAttribute('data-legal-pa');
+          if (pa) el.setAttribute('aria-hidden', pa); else el.removeAttribute('aria-hidden');
+          el.removeAttribute('data-legal-pa');
+          el.removeAttribute('inert');
+        }
+      });
+    };
     const open = (id, label) => {
       const store = document.getElementById('embed-' + id);
       if (!store) return false;
@@ -2613,6 +2637,8 @@
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       host.scrollTop = 0;
+      setBackground(true);
+      if (closeBtn) closeBtn.focus();
       return true;
     };
     const close = () => {
@@ -2620,17 +2646,28 @@
       overlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       if (shadow) shadow.innerHTML = '';
+      setBackground(false);
+      if (lastTrigger && lastTrigger.focus) lastTrigger.focus();
+      lastTrigger = null;
     };
     document.querySelectorAll('a[data-legal]').forEach((a) => {
       a.addEventListener('click', (e) => {
         const id = a.getAttribute('data-legal');
         const label = (a.querySelector('[data-en]') || a).textContent.trim();
+        lastTrigger = a;
         if (open(id, label)) e.preventDefault();
       });
     });
     closeBtn && closeBtn.addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
+    // Focus trap: only the close button and the scrollable body are focusable in the
+    // dialog (legal content has no links), so cycle Tab between just those two.
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || !overlay.classList.contains('open')) return;
+      if (e.shiftKey && document.activeElement === closeBtn) { e.preventDefault(); host.focus(); }
+      else if (!e.shiftKey && document.activeElement === host) { e.preventDefault(); closeBtn.focus(); }
+    });
   })();
 </script>
 <script type="text/html" id="embed-legal-tokushoho"><!DOCTYPE html>
