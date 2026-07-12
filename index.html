@@ -641,6 +641,7 @@
 
   /* ──────── LIGHTBOX ──────── */
   .c-gal-card{cursor:zoom-in}
+  .c-gal-card:focus-visible{outline:3px solid #e81878;outline-offset:3px}
   .lightbox{position:fixed;inset:0;z-index:200;background:rgba(8,8,9,.94);display:none;
     align-items:center;justify-content:center;padding:24px}
   .lightbox.open{display:flex}
@@ -649,6 +650,7 @@
     border:1px solid rgba(242,240,236,.3);background:transparent;color:#f2f0ec;font-size:24px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;line-height:1}
   .lightbox .lb-close:hover{background:rgba(242,240,236,.12)}
+  .lightbox .lb-close:focus-visible{outline:2px solid #f2f0ec;outline-offset:2px}
 
   /* ──────── i18n hide ──────── */
   [data-lang="en"] [data-jp],
@@ -2339,6 +2341,9 @@
       if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown'].indexOf(e.key) === -1) return;
       cancelTween(); pauseNow(); scheduleResume();
     }, { passive: true });
+    // Keep a keyboard-focused plate stationary — pause the drift while focus is inside.
+    track.addEventListener('focusin', function () { cancelTween(); pauseNow(); });
+    track.addEventListener('focusout', function (e) { if (!track.contains(e.relatedTarget)) scheduleResume(); });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
     track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
@@ -2435,7 +2440,7 @@
     });
   })();
 </script>
-<div class="lightbox" id="lightbox" aria-hidden="true">
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Enlarged gallery image">
   <button class="lb-close" id="lb-close" aria-label="Close">×</button>
   <img id="lb-img" alt="" />
 </div>
@@ -2471,25 +2476,67 @@
       document.body.style.overflow = '';
       window.scrollTo(0, lockedY);
     };
-    track.addEventListener('click', (e) => {
-      if (moved) return;
-      const card = e.target.closest('.c-gal-card');
-      if (!card) return;
+    // Inert + hide the background while the lightbox is open (same pattern as the legal modal).
+    const setBg = (hide) => {
+      Array.prototype.forEach.call(document.body.children, (el) => {
+        if (el === lb || el.tagName === 'SCRIPT' || el.tagName === 'TEMPLATE' || el.tagName === 'STYLE') return;
+        if (hide) {
+          if (!el.hasAttribute('data-lb-pa')) el.setAttribute('data-lb-pa', el.getAttribute('aria-hidden') || '');
+          el.setAttribute('aria-hidden', 'true'); el.setAttribute('inert', '');
+        } else {
+          const pa = el.getAttribute('data-lb-pa');
+          if (pa) el.setAttribute('aria-hidden', pa); else el.removeAttribute('aria-hidden');
+          el.removeAttribute('data-lb-pa'); el.removeAttribute('inert');
+        }
+      });
+    };
+    // Make the real plates keyboard-operable; hide the infinite-loop clones from AT + Tab.
+    Array.prototype.forEach.call(track.querySelectorAll('.c-gal-card'), (card) => {
+      if (card.hasAttribute('data-clone')) {
+        card.setAttribute('tabindex', '-1'); card.setAttribute('aria-hidden', 'true');
+      } else {
+        card.setAttribute('tabindex', '0'); card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', 'View plate ' + (card.getAttribute('data-p') || '') + ' enlarged');
+      }
+    });
+    let lastCard = null;
+    const openCard = (card) => {
       const si = card.querySelector('img');
       const src = si && (si.currentSrc || si.src);
       if (!src) return;
+      lastCard = card;
       img.src = src;
+      img.alt = si.getAttribute('alt') || '';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
-      lockScroll();
+      lockScroll(); setBg(true);
+      if (cl) cl.focus();
+    };
+    track.addEventListener('click', (e) => {
+      if (moved) return;
+      const card = e.target.closest('.c-gal-card');
+      if (card) openCard(card);
+    });
+    track.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+      const card = e.target.closest('.c-gal-card');
+      if (!card || card.hasAttribute('data-clone')) return;
+      e.preventDefault(); openCard(card);
     });
     // block background scroll from wheel / touch while the lightbox is open
     lb.addEventListener('wheel', (e) => { e.preventDefault(); }, { passive: false });
     lb.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
-    const close = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); unlockScroll(); img.removeAttribute('src'); };
+    const close = () => {
+      lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
+      unlockScroll(); img.removeAttribute('src'); setBg(false);
+      if (lastCard && lastCard.focus) lastCard.focus();
+      lastCard = null;
+    };
     cl && cl.addEventListener('click', close);
     lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
+    // Focus trap: the close button is the only focusable element in the lightbox.
+    lb.addEventListener('keydown', (e) => { if (e.key === 'Tab') { e.preventDefault(); if (cl) cl.focus(); } });
   })();
 </script>
 
