@@ -1428,6 +1428,11 @@
   .c-hero{position:relative;width:100%;background:#000;overflow:hidden}
   /* Video fits the browser width at its natural height — whole frame visible, no crop */
   .c-hero-video{position:relative;display:block;width:100%;height:auto}
+  /* KV play/pause control — 32px visual disc, 44px hit area, opaque (meets 1.4.11) */
+  .c-kv-toggle{position:absolute;right:16px;bottom:16px;width:44px;height:44px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;outline:none;-webkit-tap-highlight-color:transparent}
+  .c-kv-toggle .disc{width:32px;height:32px;border-radius:50%;background:#FFE000;border:2px solid #000;color:#000;display:flex;align-items:center;justify-content:center}
+  .c-kv-toggle svg{width:15px;height:15px;display:block;fill:currentColor}
+  .c-kv-toggle:focus-visible .disc{outline:3px solid #fff;outline-offset:2px}
   .c-hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
     background:linear-gradient(180deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 55%,rgba(0,0,0,.42) 100%)}
   .c-hero-credit{position:absolute;left:clamp(16px,3.5vw,52px);top:clamp(16px,3.5vw,40px);z-index:2;color:#fff}
@@ -1709,31 +1714,54 @@
 <h1 class="visually-hidden">wazawaza #001 IKUSA</h1>
 <section class="c-hero" id="hero">
   <video id="c-hero-video" class="c-hero-video" autoplay muted loop playsinline preload="auto" poster="assets/c/KV_top_pc.jpg"></video>
+  <button type="button" id="c-kv-toggle" class="c-kv-toggle" aria-label="Pause background video"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></span></button>
 </section>
 <script>
 (function(){
   var v=document.getElementById('c-hero-video'); if(!v) return;
+  var btn=document.getElementById('c-kv-toggle');
   var mq=window.matchMedia('(max-width:768px)');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var userPaused=false;
+  var play=function(){ if(reduce||userPaused) return; var p=v.play(); if(p&&p.catch) p.catch(function(){}); };
+  var ICON_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>';
+  var ICON_PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>';
+  function reflect(){
+    if(!btn) return;
+    var playing=!v.paused;
+    var disc=btn.querySelector('.disc');
+    if(disc) disc.innerHTML=playing?ICON_PAUSE:ICON_PLAY;
+    btn.setAttribute('aria-label', playing?'Pause background video':'Play background video');
+  }
   function set(){
     var sp=mq.matches;
+    v.poster=sp?'assets/c/KV_top_sp.jpg':'assets/c/KV_top_pc.jpg';
+    if(reduce) return;                       // reduced-motion: static poster, no video load/play
     var src=sp?'assets/KV_top_sp_text.mp4':'assets/KV_top_pc_text.mp4';
     if(v.getAttribute('data-src')===src) return;
     v.setAttribute('data-src',src);
-    v.poster=sp?'assets/c/KV_top_sp.jpg':'assets/c/KV_top_pc.jpg';
     v.src=src; v.load();
-    var p=v.play(); if(p&&p.catch) p.catch(function(){});
+    play(); reflect();
   }
+  if(reduce){ v.removeAttribute('autoplay'); v.pause(); if(btn) btn.hidden=true; }
   set();
   if(mq.addEventListener) mq.addEventListener('change',set); else if(mq.addListener) mq.addListener(set);
+  if(btn && !reduce){
+    btn.addEventListener('click', function(){
+      if(v.paused){ userPaused=false; play(); } else { userPaused=true; v.pause(); }
+      reflect();
+    });
+    v.addEventListener('play', reflect);
+    v.addEventListener('pause', reflect);
+    reflect();
+  }
   // Pause the (large) hero video whenever it scrolls off-screen — stops continuous
-  // video decode during the rest of the page = major scroll-perf win. Resume in view.
+  // video decode during the rest of the page = major scroll-perf win. Resume in view
+  // (but never override a manual pause, and never autoplay under reduced-motion).
   if('IntersectionObserver' in window){
-    var onScreen=true;
     var vObs=new IntersectionObserver(function(ents){
       ents.forEach(function(e){
-        onScreen=e.isIntersecting;
-        if(onScreen){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
-        else { v.pause(); }
+        if(e.isIntersecting){ play(); } else { v.pause(); }
       });
     },{threshold:0.01});
     vObs.observe(v);
