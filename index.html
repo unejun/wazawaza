@@ -1085,14 +1085,15 @@
   .faq-a p.en{font-family:var(--serif-en);font-style:normal;color:var(--ink);margin-bottom:12px;font-size:15px;line-height:1.8}
 
   .faq-cta{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:32px;text-align:center}
-  .faq-cta a{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:0;
+  .faq-cta button{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:0;
     padding:15px 30px;border:1px solid var(--rule-strong);border-radius:999px;color:var(--ink);
-    background:transparent;transition:background .2s,border-color .2s,color .2s;text-decoration:none}
-  .faq-cta a:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-  .faq-cta a .main{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
-  .faq-cta a .sub{font-family:var(--serif-jp);font-weight:600;font-size:14px;letter-spacing:.06em;color:inherit}
-  [data-lang="ja"] .faq-cta a .main{display:none}
-  [data-lang="en"] .faq-cta a .sub{display:none}
+    background:transparent;transition:background .2s,border-color .2s,color .2s;text-decoration:none;
+    font:inherit;appearance:none;-webkit-appearance:none;cursor:pointer}
+  .faq-cta button:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .faq-cta button .main{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+  .faq-cta button .sub{font-family:var(--serif-jp);font-weight:600;font-size:14px;letter-spacing:.06em;color:inherit}
+  [data-lang="ja"] .faq-cta button .main{display:none}
+  [data-lang="en"] .faq-cta button .sub{display:none}
 
   @media (max-width:640px){
     .faq-q .en{font-size:14px}
@@ -1606,9 +1607,9 @@
   .faq-icon::before,.faq-icon::after{background:#000!important}
   .faq-intro .en{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-style:normal!important;font-weight:700!important;font-size:20px!important;color:#000}
   .faq-cta{align-items:center}
-  .faq-cta a{border:2px solid #000!important;color:#000!important;border-radius:999px}
-  .faq-cta a:hover{background:#000!important;color:var(--cyellow)!important}
-  .faq-cta a .main{font-size:15px!important}
+  .faq-cta button{border:2px solid #000!important;color:#000!important;border-radius:999px}
+  .faq-cta button:hover{background:#000!important;color:var(--cyellow)!important}
+  .faq-cta button .main{font-size:15px!important}
 
   @media (max-width:640px){
     .c-hero{height:auto!important;min-height:0!important;max-height:none!important}
@@ -1642,7 +1643,7 @@
   @media(max-width:900px){.turn .who,.interview .turn .who{font-size:15px!important}}
 
   /* == item 12: Inquiry button + Legal heading -> Helvetica bold == */
-  .faq-cta a,.faq-cta .main,.faq-cta .sub,.footer-grid h3{
+  .faq-cta button,.faq-cta .main,.faq-cta .sub,.footer-grid h3{
     font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif!important;font-weight:700!important}
 
   /* == items 3-5: gallery plates pin-corner, no border, yellow gaps == */
@@ -2089,10 +2090,10 @@
         </details>
 
         <div class="faq-cta">
-          <a style="cursor: pointer" data-tf-popup="juHVs6yG" role="button" tabindex="0">
+          <button type="button" data-tf-popup="juHVs6yG">
             <span class="main">Send an Inquiry</span>
             <span class="sub">お問い合わせを送る</span>
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -3841,8 +3842,79 @@
   })();
 </script>
 
-<!-- Typeform popup embed (Submit an Offer button) -->
+<!-- Typeform popup embed (Submit an Offer + Send an Inquiry buttons) -->
 <script src="https://embed.typeform.com/next/embed.js"></script>
+<script>
+  // Typeform's popup does not trap keyboard focus, so Tab leaks to the page behind it
+  // (WCAG 2.4.3). Apply the same background-inert protection the legal modal uses, to
+  // EVERY [data-tf-popup] trigger. The popup is inserted at body level and must itself
+  // stay interactive, so it is explicitly excluded from the inert set.
+  (function () {
+    var lastTfTrigger = null, tfOpen = false, g1 = null, g2 = null;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-tf-popup]'), function (el) {
+      el.addEventListener('click', function () { lastTfTrigger = el; });
+    });
+    function inTypeform(el, popups) {
+      for (var i = 0; i < popups.length; i++) { if (el === popups[i] || el.contains(popups[i])) return true; }
+      return false;
+    }
+    // Inert every body child except the Typeform popup and our sentinels, so the tab
+    // sequence is confined to [sentinel, iframe, close, sentinel] — never the page or browser UI.
+    function setBackground(hide) {
+      var popups = document.querySelectorAll('.tf-v1-popup');
+      Array.prototype.forEach.call(document.body.children, function (el) {
+        if (el.tagName === 'SCRIPT' || el.tagName === 'TEMPLATE' || el.tagName === 'STYLE') return;
+        if (el.hasAttribute('data-tf-guard')) return;       // sentinels stay interactive
+        if (inTypeform(el, popups)) return;                 // the Typeform popup stays interactive
+        if (hide) {
+          if (!el.hasAttribute('data-tf-pa')) el.setAttribute('data-tf-pa', el.getAttribute('aria-hidden') || '');
+          el.setAttribute('aria-hidden', 'true'); el.setAttribute('inert', '');
+        } else {
+          var pa = el.getAttribute('data-tf-pa');
+          if (pa) el.setAttribute('aria-hidden', pa); else el.removeAttribute('aria-hidden');
+          el.removeAttribute('data-tf-pa'); el.removeAttribute('inert');
+        }
+      });
+    }
+    function iframeEl() { var pf = document.querySelector('.tf-v1-popup'); return pf ? pf.querySelector('iframe') : null; }
+    function closeEl() { var pf = document.querySelector('.tf-v1-popup'); return pf ? pf.querySelector('.tf-v1-close') : null; }
+    function focusForm() { var f = iframeEl(); if (f) { try { f.focus(); } catch (e) {} } }
+    function mkSentinel() {
+      var g = document.createElement('span');
+      g.tabIndex = 0; g.setAttribute('data-tf-guard', '');
+      g.style.cssText = 'position:fixed;width:1px;height:1px;padding:0;margin:0;overflow:hidden;opacity:0;pointer-events:none';
+      return g;
+    }
+    function onEsc(e) { if (e.key === 'Escape' && tfOpen) { var c = closeEl(); if (c) c.click(); } }
+    var mo = new MutationObserver(function () {
+      var popup = document.querySelector('.tf-v1-popup');
+      if (popup && !tfOpen) {
+        tfOpen = true;
+        // Sentinels immediately BEFORE and AFTER the popup (siblings). The iframe is
+        // cross-origin — we can't see focus inside it — but native Tab / Shift+Tab exits the
+        // iframe onto these sentinels, where we redirect, so focus never reaches the browser UI.
+        g1 = mkSentinel(); g2 = mkSentinel();
+        g1.addEventListener('focus', function () { var c = closeEl(); if (c) c.focus(); }); // start sentinel (Shift+Tab out of iframe) -> close
+        g2.addEventListener('focus', focusForm);                                            // end sentinel (Tab past close) -> iframe
+        popup.parentNode.insertBefore(g1, popup);
+        if (popup.nextSibling) popup.parentNode.insertBefore(g2, popup.nextSibling); else popup.parentNode.appendChild(g2);
+        document.addEventListener('keydown', onEsc, true);   // Esc closes when focus is on a parent-level element
+        setBackground(true);
+        focusForm();                                         // initial focus = the form, not the close button
+        setTimeout(function () { if (document.activeElement === closeEl()) focusForm(); }, 200); // beat Typeform's own focus
+      } else if (!popup && tfOpen) {
+        tfOpen = false;
+        document.removeEventListener('keydown', onEsc, true);
+        if (g1 && g1.parentNode) g1.parentNode.removeChild(g1);
+        if (g2 && g2.parentNode) g2.parentNode.removeChild(g2);
+        g1 = g2 = null;
+        setBackground(false);
+        if (lastTfTrigger && lastTfTrigger.focus) lastTfTrigger.focus();
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
 <script>
   /* Pin-header offset: fixed header is out of flow, so reserve exactly its
      measured height as body padding — flush hero on every width/zoom. */
