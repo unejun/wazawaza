@@ -31,9 +31,9 @@
     --accent-deep:#8a6a3d;
     --vermilion:#8a1c1c;
     --serif-en:"Helvetica Neue",Helvetica,Arial,"Noto Sans JP",sans-serif;
-    --serif-jp:"Noto Sans JP","Helvetica Neue",Helvetica,sans-serif;
-    --sans-jp:"Noto Sans JP",ui-sans-serif,system-ui,sans-serif;
-    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --serif-jp:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --sans-jp:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --mono:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
     --maxw:1320px;
     --gut:48px;
   }
@@ -135,7 +135,7 @@
 
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--ink);font-family:var(--sans-jp);
-    font-weight:400;line-height:1.75;letter-spacing:.02em;font-size:16px;overflow-x:hidden;
+    font-weight:700;line-height:1.35;letter-spacing:.02em;font-size:16px;overflow-x:hidden;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 
   /* Manga panel-frame background (fixed, behind everything) */
@@ -993,7 +993,7 @@
   .turn{display:grid;grid-template-columns:96px 1fr;gap:28px;padding:22px 0;
     border-top:1px solid var(--rule);align-items:start}
   .turn:first-child{border-top:0}
-  .turn .who{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.16em;
+  .turn .who{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.16em;
     text-transform:uppercase;padding-top:6px;color:var(--ink-3)}
   .turn.asano .who{color:var(--accent-deep)}
   .turn p{font-size:16px;font-weight:400;line-height:1.95;color:var(--ink-2);margin:0;text-wrap:pretty;letter-spacing:.03em}
@@ -1011,7 +1011,7 @@
   .interview-more.hidden{display:none}
   .interview-more button{appearance:none;cursor:pointer;background:transparent;color:var(--ink);
     border:1px solid var(--rule-strong);border-radius:999px;padding:14px 28px;
-    font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
     display:inline-flex;align-items:center;gap:12px;transition:background .2s,color .2s,border-color .2s}
   .interview-more button:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
   .interview-more button .chev{width:7px;height:7px;border-right:1px solid currentColor;
@@ -1019,22 +1019,25 @@
   .interview-more button .chev.up{transform:rotate(225deg) translateY(-1px)}
 
   /* Interview inline photos */
-  .interview-figure{margin:44px auto;max-width:560px;border:1px solid var(--rule-strong);border-radius:8px;
+  .interview-figure{margin:44px auto;max-width:620px;border:1px solid var(--rule-strong);border-radius:8px;
     overflow:hidden;background:var(--paper)}
   .interview-figure image-slot{display:block;width:100%;height:clamp(220px,42vw,360px)}
+  .interview-figure img{display:block;width:100%;height:auto}
+  .interview-figure.portrait{max-width:440px}
   /* Interview top photo (landscape, full width) */
   .interview-top-figure{margin:0 auto 8px;border:1px solid var(--rule-strong);border-radius:8px;
     overflow:hidden;background:var(--paper)}
   .interview-top-figure image-slot{display:block;width:100%;height:clamp(240px,32vw,420px)}
-  .interview-top-figure figcaption{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.18em;
-    text-transform:uppercase;color:var(--ink-3);padding:13px 18px;border-top:1px solid var(--rule);
-    display:flex;justify-content:space-between;gap:14px}
-  .interview-figure figcaption{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.18em;
+  .interview-top-figure img{display:block;width:100%;height:clamp(300px,34vw,480px);object-fit:cover;object-position:center}
+  .interview-top-figure figcaption{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;
+    text-transform:none;color:var(--ink-3);padding:13px 18px;border-top:1px solid var(--rule);
+    display:flex;justify-content:center;text-align:center;gap:8px}
+  .interview-figure figcaption{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;
     text-transform:uppercase;color:var(--ink-3);padding:13px 18px;border-top:1px solid var(--rule);
     display:flex;justify-content:space-between;gap:14px}
   @media (max-width:640px){
     .interview-figure{margin:32px auto}
-    .interview-figure image-slot{aspect-ratio:4/3}
+    .interview-figure.portrait{max-width:340px}
   }
 
   @media (max-width:640px){
@@ -1575,7 +1578,7 @@
   .interview .turn.asano .who{color:var(--cpink)!important}
   .turn{grid-template-columns:132px 1fr!important;gap:24px!important}
   .turn .who{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-weight:800!important;
-    font-size:22px!important;letter-spacing:.02em!important;text-transform:none!important;padding-top:2px!important}
+    font-size:10px!important;letter-spacing:.08em!important;text-transform:none!important;padding-top:5px!important}
   .interview-body p[data-en], .interview .turn p[data-en], .turn p{font-size:19px!important;line-height:1.8!important;color:#000!important}
 
   /* process: chapter title 38pt / body 22pt */
@@ -1603,7 +1606,7 @@
     .c-hero{height:auto!important;min-height:0!important;max-height:none!important}
     .c-hero-video{position:relative!important;width:100%!important;height:auto!important;object-fit:contain!important}
     .turn{grid-template-columns:1fr!important;gap:4px!important}
-    .turn .who{font-size:18px!important}
+    .turn .who{font-size:9px!important}
     .interview-body p[data-en], .interview .turn p[data-en], .turn p{font-size:17px!important}
     .chapter-title .en{font-size:28px!important}
     .chapter p{font-size:18px!important}
@@ -1613,6 +1616,58 @@
        Cap at ~half the viewport so they show near natural size (never upscaled), left-aligned. */
     .c-sechead{text-align:left!important}
     .c-sechead-img{width:auto!important;height:auto!important;max-width:min(300px,54vw)!important;margin:0 auto 0 0!important}
+  }
+
+  /* == 0710 spec item 9,11: Helvetica-bold body + tight leading (PC & SP) == */
+  .body-jp,.hero-lead,.hero-sub,.overview-body p,.q-card p,.escrow-node p,
+  .escrow-stages .desc,.ef p,.flow-body p,.gline p,.guarantee-intro,.apply-sub,
+  .footer-grid p,footer p,.turn p,.interview .turn p,.interview-body p,
+  .vision-statement,.vision-statement[data-en],.article p,.article p[data-en],
+  .faq-a p,.faq-a p.en,.chapter p{
+    font-size:14px!important;line-height:1.3!important;font-weight:700!important}
+  .hero h1,.sec-title,.flow-body h3,.q-card h3,.quote q,.escrow-headline,
+  .apply-headline,.gline h4,.ef h4,.escrow-node h4,.hero-meta strong,
+  .creator-name,.works-panel ol .ti{line-height:1.2!important}
+  .ikusa-title,.hero-kanji,.display,.display-jp{line-height:1.05!important}
+  /* speaker name smaller than body (item 11) */
+  .turn .who{font-size:15px!important;font-weight:700!important}
+  @media(max-width:900px){.turn .who,.interview .turn .who{font-size:15px!important}}
+
+  /* == item 12: Inquiry button + Legal heading -> Helvetica bold == */
+  .faq-cta a,.faq-cta .main,.faq-cta .sub,.footer-grid h5{
+    font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif!important;font-weight:700!important}
+
+  /* == items 3-5: gallery plates pin-corner, no border, yellow gaps == */
+  .c-gal-card{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+  .c-gal-card img,.c-gal-card picture{border-radius:0!important}
+  .c-gal-dots button,.c-gal-dots .num{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif!important}
+  .c-gal-dots .num{font-weight:700!important}
+
+  /* == item 2: schedule directly below KV (PC 2-col, SP stacked) == */
+  .c-kvsched{background:var(--cyellow);padding:clamp(28px,5vw,56px) 0}
+  .c-kvsched-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,48px);
+    max-width:1080px;margin:0 auto;padding:0 clamp(20px,4vw,44px);align-items:start}
+  .c-kvsched-grid > div{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+  .c-kvsched .k{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:clamp(11px,1.3vw,14px);letter-spacing:.14em;text-transform:uppercase;color:var(--cpink);line-height:1.1}
+  .c-kvsched .v{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:800;font-size:clamp(22px,2.8vw,34px);color:#000;line-height:1.1;white-space:nowrap}
+  .c-kvsched .note{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:clamp(11px,1.2vw,13px);color:#000;line-height:1.35}
+  @media(max-width:820px){.c-kvsched-grid{grid-template-columns:1fr;gap:30px}}
+
+  /* == item 6: original illustration + IKUSA&ASANO (700px on PC) == */
+  .c-gal-extra{display:flex;flex-direction:column;align-items:center;
+    gap:clamp(36px,6vw,64px);margin:clamp(28px,5vw,56px) auto clamp(36px,6vw,64px);padding:0 20px}
+  .c-gal-extra-fig{margin:0;text-align:center;max-width:100%}
+  .c-gal-extra-fig img{display:block;width:700px;max-width:100%;height:auto;margin:0 auto}
+  .c-gal-extra-fig figcaption{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#000;margin-top:14px}
+
+  /* == mobile-only: keep these one line == */
+  @media(max-width:640px){
+    .faq-intro .en{font-size:14px!important;white-space:nowrap}
+    .footer-grid ul a{font-size:13px!important;white-space:nowrap;letter-spacing:.01em}
   }
 </style>
 </head>
@@ -1657,7 +1712,7 @@
   var mq=window.matchMedia('(max-width:768px)');
   function set(){
     var sp=mq.matches;
-    var src=sp?'assets/c/KV_movie_sp.mp4':'assets/c/KV_movie_pc.mp4';
+    var src=sp?'assets/KV_top_sp_text.mp4':'assets/KV_top_pc_text.mp4';
     if(v.getAttribute('data-src')===src) return;
     v.setAttribute('data-src',src);
     v.poster=sp?'assets/c/KV_top_sp.jpg':'assets/c/KV_top_pc.jpg';
@@ -1681,6 +1736,16 @@
   }
 })();
 </script>
+
+<!-- ════════ SCHEDULE (directly below KV) ════════ -->
+<section class="c-kvsched" id="schedule" aria-label="Schedule">
+  <div class="wrap">
+    <div class="c-kvsched-grid">
+      <div><span class="k">Application Window</span><span class="v">July – August 2026</span><span class="note">A two-month application window.</span></div>
+      <div><span class="k">Shipping Schedule</span><span class="v">Oct 2026 – Dec 2027</span><span class="note">Ship dates vary by serial number.<br>Each buyer is contacted individually.</span></div>
+    </div>
+  </div>
+</section>
 
 <!-- ════════ 01 — GALLERY ════════ -->
 <section class="sec c-gallery" id="gallery">
@@ -1720,7 +1785,11 @@
 <!-- ════════ SPECIFICATIONS ════════ -->
 <section class="sec c-spec" id="spec">
   <div class="wrap">
-    <picture><source media="(max-width:768px)" srcset="assets/c/sanmenzu_sp.png"><img class="c-sanmenzu reveal" src="assets/c/sanmenzu_pc.png" alt="IKUSA — front / side / top views with dimensions"></picture>
+    <div class="c-gal-extra reveal">
+      <figure class="c-gal-extra-fig"><img src="assets/gallery/original-illustration.jpg" alt="The original illustration" loading="lazy"><figcaption>The original illustration</figcaption></figure>
+      <figure class="c-gal-extra-fig"><img src="assets/gallery/ikusa-asano.jpg" alt="IKUSA & ASANO" loading="lazy"><figcaption>IKUSA &amp; ASANO</figcaption></figure>
+    </div>
+    <picture><source media="(max-width:768px)" srcset="assets/gallery/yonmenzu_sp.png"><img class="c-sanmenzu reveal" src="assets/gallery/yonmenzu_pc.png" alt="IKUSA — four views with dimensions"></picture>
     <div class="c-spec-grid reveal">
       <div><span class="v">140<small>CM</small></span><span class="k">Height (without base)</span></div>
       <div><span class="v">42<small>KG</small></span><span class="k">Total mass</span></div>
@@ -1732,10 +1801,6 @@
       <div><span class="k">Finish</span><span class="v">Urethane coating</span></div>
       <div><span class="k">Origin</span><span class="v">Made in Japan (handmade)</span></div>
     </div>
-    <div class="c-spec-sched reveal">
-      <div><span class="k">Application Window</span><span class="v">July – August 2026</span><span class="note"><br>A two-month application window.</span></div>
-      <div><span class="k">Shipping Schedule</span><span class="v">Oct 2026 – Dec 2027</span><span class="note"><br>Ship dates vary by serial number.<br>Each buyer is contacted individually.</span></div>
-    </div>
   </div>
 </section>
 
@@ -1745,7 +1810,9 @@
     <div class="sec-head">
       <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_02_sp.png"><img class="c-sechead-img" src="assets/c/title_02_gallery_pc.png" alt="02 STATEMENT"></picture></div>
       <div class="article">
-      <h3 class="c-vision-title">wazawaza vision</h3>
+      <h3 class="c-vision-title">About wazawaza</h3>
+      <p class="vision-statement" data-en>In collaboration with Japanese manga artists, wazawaza creates strictly limited pieces, built on Japanese craftsmanship.</p>
+      <h3 class="c-vision-title" style="margin-top:48px">Vision</h3>
       <p class="vision-statement" data-jp>wazawaza は、ただ上質なものを売るために生まれたのではありません。もっと稀なもの——<span class="acc">夢と理想に、かたちを与える</span>ために存在しています。</p>
       <p class="vision-statement" data-en>wazawaza was not founded simply to sell fine things. It exists to offer something rarer — <span class="acc">a dream, and an ideal, given form.</span></p>
 
@@ -1784,7 +1851,7 @@
     <div class="sec-head">
       <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_03_sp.png"><img class="c-sechead-img" src="assets/c/title_03_gallery_pc.png" alt="03 INTERVIEW"></picture></div>
       <div class="interview">
-      <figure class="interview-top-figure"><image-slot id="iv-top" shape="rect" placeholder="インタビュー メイン写真 / Lead image"></image-slot><figcaption><span data-jp>浅野いにお × 小柳大輔</span><span data-en>Inio Asano × Daisuke Koyanagi</span></figcaption></figure>
+      <figure class="interview-top-figure"><img src="assets/interview/iv01_lead.jpg" alt="Inio Asano × Daisuke Koyanagi" loading="lazy"><figcaption><span data-en>INIO ASANO (Manga Artist) &times; DAISUKE KOYANAGI (wazawaza Producer)</span></figcaption></figure>
       <div class="interview-body collapsed" id="interview-body">
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>この話を最初に持ちかけたのは——もう一年くらい前になりますか。</p><p data-en>When did I first come to you about this — about a year ago?</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>ちょうど一年前くらいですね。とはいえ考えてみれば、僕にしてはかなり速かった。</p><p data-en>Right around a year ago. Though when you think about it, that was pretty fast, for me.</p></div></div>
@@ -1797,19 +1864,21 @@
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>（笑）たしかに。</p><p data-en>(laughs) True.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>「え、本当にやるの?」という感じで。そして次は「え、もう完成したの?」と。</p><p data-en>It's like, &ldquo;Wait, we're actually doing this?&rdquo; And then, &ldquo;Wait, it's already finished?&rdquo;</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>そうですね。でも考えれば考えるほど、これは理に適ったプロジェクトだと感じました。世界が本当に敬意を払う、日本の漫画家——なかでも、一枚の絵のデザインに確かな作家性を込められる、あなたという作家に出会えた。そのうえで、日本屈指の工房の技を投入する。そして本当に望む人だけに届けることで、相応しく評価される価値を与える。あらゆるレイヤーで価値が最適化されるプロジェクトです。それでも当時は、本当に実現できるのか、と。</p><p data-en>Right. But the more I thought about it, the more it struck me as a project that simply makes sense. You have the Japanese manga artist — a figure the rest of the world genuinely respects — and then there was meeting you in particular: an artist who can pack real authorship into the design of a single image. On top of that, you put the skills of one of Japan's finest ateliers to work. And then you give the piece its value by delivering it only to the people who truly want it. It's a value-optimization project on every level. And yet — at the time it really did feel like, can this actually be done?</p></div></div>
-      <figure class="interview-figure"><image-slot id="iv-1" shape="rect" placeholder="インタビュー写真 01"></image-slot><figcaption><span data-jp>インタビュー</span><span data-en>INTERVIEW</span><span>01</span></figcaption></figure>
-      <div class="turn asano"><div class="who">Asano</div><div><p data-jp>これは、双方が同じ確信を共有していないと成立しない類いのものです。あなたと僕は定期的に意見を交わしていて、あるとき話が外——海外へ目を向ける方向に転がった。その根本的な、共有された確信がプロジェクトを動かし始めたんです。振り返れば、タイミングも絶妙だった。お互い同じことを考えていた時期だった。</p><p data-en>This is the kind of thing you can't pull off unless both sides share the same conviction. You and I trade notes regularly, and at some point the conversation turned to looking outward, overseas. That basic, shared conviction is what got the project started. Looking back, the timing was excellent — we'd both been thinking along the same lines.</p></div></div>
+<div class="turn asano"><div class="who">Asano</div><div><p data-jp>これは、双方が同じ確信を共有していないと成立しない類いのものです。あなたと僕は定期的に意見を交わしていて、あるとき話が外——海外へ目を向ける方向に転がった。その根本的な、共有された確信がプロジェクトを動かし始めたんです。振り返れば、タイミングも絶妙だった。お互い同じことを考えていた時期だった。</p><p data-en>This is the kind of thing you can't pull off unless both sides share the same conviction. You and I trade notes regularly, and at some point the conversation turned to looking outward, overseas. That basic, shared conviction is what got the project started. Looking back, the timing was excellent — we'd both been thinking along the same lines.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>ええ。</p><p data-en>Right.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>僕の漫画は近頃、海外でよく売れています。場合によっては、海外のほうが数字が大きいこともある。それでも僕は日本の漫画家で、日本で仕事をしている。日本で仕事をしていると、漫画家としてしか見てもらえない。でも実際は、それ以上のことをやっている。キャラクターをデザインし、もちろん物語も考える。ただ、最終的にすべてが漫画というかたちで出てこないと、誰も受け入れてくれない。ちょうど「自分はもっといろいろできるはずだ」と考えていた頃でした。</p><p data-en>My manga sells a lot overseas these days — in some cases the numbers are actually higher there. Still, I'm a Japanese manga artist, so I do my business in Japan, and when you work in Japan, you only ever get seen as a manga artist. But I actually do a lot more than that. I design characters; I think up stories, of course. It's just that unless it all comes out as manga in the end, no one will accept it. It was right around the time I'd been thinking, &ldquo;I can actually do so much more than this.&rdquo;</p></div></div>
+      <figure class="interview-figure"><img src="assets/interview/iv02_talk1.jpg" alt="Behind the interview" loading="lazy"><figcaption><span data-en>Behind the interview</span><span data-jp>対談風景</span><span>02</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>ええ、ええ。</p><p data-en>Right, right.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>このプロジェクトを持ちかけられたとき、企画やコンセプトを担うつもりはないけれど、デザインなら今すぐ始められると言いました。これまで僕のデザインの仕事はほとんど漫画のためのものでしたが、それ以外のこともできる。だから「やってみましょう」と言って——そのとき描いたデザインを、あなたは実物のかたちに、そのまま仕上げてしまった。</p><p data-en>When you brought me this project, I said I had no intention of handling the planning or the concept, but if it was design, I could start right away. Up to now most of my design work had been for manga, but I can do other things too. So I said, &ldquo;Let me give it a shot&rdquo; — and the design I drew right then, you went and turned into the actual piece, just like that.</p></div></div>
+      <figure class="interview-figure portrait"><img src="assets/interview/iv03_original.jpg" alt="The original illustration" loading="lazy"><figcaption><span data-en>The original illustration</span><span data-jp>デザイン原画</span><span>03</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>そうでした。今回これほど速く動けたのは、あのゼロ・トゥ・ワンのイラストがあったから。wazawaza では、元になるイラストはできるだけシンプルでいいと考えていました。理由はこうです。あなたのデザインのキャッチーさや個性が大事なのはもちろんですが、本当の価値は、それをどう立体に起こすかにある。つまり wazawaza は、本質的には「立体化」のプロジェクトなんです。日本の工房が長年磨いてきた立体の技を見せるためのプロジェクト。そう捉えると、このイラストは「十分」どころか、まさに理想的でした。</p><p data-en>We did. What let us move so fast this time was that zero-to-one illustration. For wazawaza, I'd been thinking the source illustration could be as simple as possible. Here's why: the catchiness and character of your design matter, obviously — but the real value is in how you bring it into three dimensions. In other words, wazawaza is essentially a 3D-realization project. It's a project for showing off the three-dimensional craft that Japanese ateliers have spent years refining. Seen that way, this illustration wasn't just &ldquo;good enough&rdquo; — it was exactly right.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>造形の技を際立たせるのが目的なら、元のデザインはむしろシンプルなほうがいい——これ以上削れない、というところまで削ぎ落としたものがいいんです。</p><p data-en>Since the goal is to let the modeling craft shine, the original design is actually better off simple — pared down to where you couldn't strip away one more thing.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>そう思っていたし、その直感は正しいと感じていました。イラストの段階で作り込みすぎると——デザイナーが正面・側面・上・下と360度すべてのモデルを渡してしまうと——このプロジェクトの主役である、日本の工房の技や知見、その魅力が削がれてしまう。まさに彼らを単なる下請けにしてしまう。</p><p data-en>That's what I thought, and I had a feeling that instinct was correct. If you over-spec it at the illustration stage — if the designer hands over a full 360-degree model, front, side, top, bottom — then the very thing this project is about, the skill and know-how and appeal of the Japanese atelier, gets stripped away. You really do just turn them into a vendor.</p></div></div>
+      <figure class="interview-figure"><img src="assets/interview/iv04_prototype.jpg" alt="The prototype" loading="lazy"><figcaption><span data-en>The prototype</span><span data-jp>原型（立体化）</span><span>04</span></figcaption></figure>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>その通りです。普段デザインを描くときは、少なくとも三面——正面・側面・背面——を描きます。でも今回は正面しか描かなかった。僕の絵は横から見ると線が独特なので、成立するか不安もあった。でも、見事に成立していた。</p><p data-en>Exactly. Normally, when you draw a design, you do at least three views — front, side, back. But this time I only drew it from the front. The lines of my art are distinctive seen from the side, so I'd wondered if it would hold up — and it held up beautifully.</p></div></div>
-      <figure class="interview-figure"><image-slot id="iv-2" shape="rect" placeholder="インタビュー写真 02"></image-slot><figcaption><span data-jp>インタビュー</span><span data-en>INTERVIEW</span><span>02</span></figcaption></figure>
-      <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>成立していましたね。</p><p data-en>It did, didn't it.</p></div></div>
+<div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>成立していましたね。</p><p data-en>It did, didn't it.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>彼らの読み取り方、咀嚼の仕方——あれは確かな技と経験があってこそです。シルエットにはほとんど手を入れていない。顔は一切変えていない。体の反りは調整していましたが、それ以外に直すところはなかった。見事でした。</p><p data-en>The way they read it and digested it — that comes from real skill, real experience. They barely touched the silhouette. The face, they didn't change at all. They adjusted the arch of the body, but beyond that there was nothing to fix. That was remarkable.</p></div></div>
+      <figure class="interview-figure portrait"><img src="assets/interview/iv05_silhouette.jpg" alt="Silhouette" loading="lazy"><figcaption><span data-en>Silhouette</span><span data-jp>横顔</span><span>05</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>これは、日本の手仕事と感性を使って、二次元の理想を完璧な三次元に起こすプロジェクトです。だから逆に言えば、メッセージはこうでした——実現できるかどうかは気にしないでいい、今いちばん描きたい、いちばん魅力的なキャラクターを、何の制約もなく描いてほしい、と。</p><p data-en>This is a project that uses Japanese craft and sensibility to turn an ideal in two dimensions into a perfect three dimensions. So, to put it the other way around, the message was: don't worry about whether it's feasible — just draw the most appealing character you want to draw right now, completely without restraint.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>ええ。最初にデザインの方向性をゆるく話していたとき、あなたは意味を盛り込みすぎないことにも気を配っていた。</p><p data-en>Right. When we were first talking loosely about how to approach the design, you were also careful about not loading it with meaning.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>まさに、まさに。</p><p data-en>Exactly, exactly.</p></div></div>
@@ -1822,23 +1891,28 @@
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>そう読まれることもある。でも僕の場合は、ただ普段からやっている人間というだけ。いつも通り仕事をしているだけです。とはいえ、非常に独特な表現——いわば記号です。それがあるかないかで、まるで違う。</p><p data-en>It does get read that way — but in my case, it's just that I'm someone who does it all the time. I'm just working as usual. That said, it's a very distinctive form of expression — a sign, in a way. Whether it's there or not makes all the difference.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>本当にそうですね。</p><p data-en>It really does.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>本気で怒った顔を造形で表現することもできる。でもここではあえてデフォルメする。紙の上ではかなりシンプルに描いたけれど、立体になると、特に靴は実に細かく作り込まれていて、釘バットも膨大なディテールがある——それなのに、顔の中身は記号なんです。そのアンバランスさが面白いんだと思う。僕はそれをコントロールできる人間なので、本当にいつも通り仕事をしているだけなんです。</p><p data-en>You could express a genuinely angry face through the sculpting, sure — but here you deliberately deform it instead. On paper I drew it quite simply, but once it became a physical piece, the shoes especially were built out in real detail, and the nail bat has tons of detail — and yet the contents of the face are a sign. That imbalance is what makes it interesting, I think. I'm someone who can control that, so it really is just me working as usual.</p></div></div>
+      <figure class="interview-figure"><img src="assets/interview/iv06_nailbat.jpg" alt="Nail bat, in detail" loading="lazy"><figcaption><span data-en>Nail bat, in detail</span><span data-jp>釘バット</span><span>06</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>鼻についても説明してくれましたね。あれは——まあ、ちょっと違うけど——藤子不二雄的なものというか。</p><p data-en>You explained the nose to me, too. It's that — well, not quite — Fujiko Fujio kind of thing.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>藤子不二雄や赤塚不二夫の古いスタイルが昔から好きなんです。「あの鼻は一体何なんだ」と訊かれたら——まあ、これですよ、と。漫画で昔から伝統的に使われてきた鼻です。でも、ある種の愛嬌がある。今の漫画でこの鼻を描く人はほとんどいない。今回は鼻と眉でしたが、漫画的表現——いわゆる漫符を持ち込むことが、このプロジェクトの最もミニマルな核となるコンセプトです。</p><p data-en>I've always loved the old styles of Fujiko Fujio and Fujio Akatsuka. If you ask, &ldquo;What even is that nose?&rdquo; — well, this is it, basically. It's a nose that's been used traditionally in manga for ages. But there's a certain charm to it. Almost no one in contemporary manga draws that nose anymore. This time it was the nose and the eyebrows, but bringing in manga-style expression — what we call manpu, manga signs — is the most minimal core concept of this project.</p></div></div>
-      <figure class="interview-figure"><image-slot id="iv-3" shape="rect" placeholder="インタビュー写真 03"></image-slot><figcaption><span data-jp>インタビュー</span><span data-en>INTERVIEW</span><span>03</span></figcaption></figure>
-      <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>そして、これをシリーズにしていきます。すでに次の立体に取りかかっている。</p><p data-en>And we're going to turn it into a series. We're already into the next 3D piece.</p></div></div>
+<div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>そして、これをシリーズにしていきます。すでに次の立体に取りかかっている。</p><p data-en>And we're going to turn it into a series. We're already into the next 3D piece.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>キャラクターを増やすのは難しいかもしれません。いちばんシンプルなものを最初に描いたからこそ、たとえば三体並べたときに、それがいちばん地味になってしまっては困る。でも、シリーズにできたら嬉しいです。</p><p data-en>Adding more characters might be tricky. Precisely because I drew the simplest one first, you can't have it end up the plainest when, say, three of them are lined up together. But I'd love it if we could make it a series.</p></div></div>
+      <figure class="interview-figure portrait"><img src="assets/interview/iv07_ikusa.jpg" alt="IKUSA" loading="lazy"><figcaption><span data-en>IKUSA</span><span data-jp>完成作品</span><span>07</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>wazawaza は実験的なプロジェクトですが、日本の漫画家という立ち位置、そして日本の工房という立ち位置——どちらも世界のどこにもない能力を持っていて、世界はまさにそこに注目している。それが、今この瞬間に日本が占めている位置だと思います。それらすべてを重ね合わせ、最適に評価され、いちばん望む一人の手に確かに届ける。そこに一片の無駄もない——そこが好きなんです。</p><p data-en>wazawaza is an experimental project, but the position of the Japanese manga artist, and the position of the Japanese atelier — each has an ability you won't find anywhere else in the world, and the rest of the world is paying attention to exactly that. That, I think, is the position Japan occupies in this present moment. You layer all of it together, have it valued optimally, and place it firmly in the hands of the one person who wants it most. The fact that there's not an ounce of waste in that — that's what I like.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>ええ。そしてこのプロジェクトのいちばん面白いところは、物語がないことです。コンテンツを届けるとき、たいていは何か物語的なものに乗せ、着飾らせて、ようやく誰かに届く。今回あえてそれをしないことが、僕にはいちばん面白い。</p><p data-en>Right. And the most interesting thing about this project is that there's no story. When you deliver content, you almost always have to carry it on something narrative, dress it up, before it finally registers with anyone. This time, deliberately not doing that is what I find most interesting.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>ええ。</p><p data-en>Right.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>僕は漫画家ですから、どうしても物語ありきで考えてしまう。でも本当のことを言えば、自分自身は物語にそれほど興味がない——むしろ、描くものを得るために、必要に迫られて物語を考えてきた。その意味で、ここで自由に描けるのはとても楽しい。物語をつけると世界も箱の中に収まってしまう。その潔さは本当に新しい。他に似たものを見たことがない。実に面白いと思います。</p><p data-en>I'm a manga artist, after all, so I default to thinking story-first. But the truth is, I'm not all that interested in story myself — if anything, I've thought about story because I had to, in order to have something to draw. In that sense, getting to draw freely here is a lot of fun. Attach a story and the world gets boxed in, too; that decisiveness is genuinely new. I don't see anything else like it. I find it really interesting.</p></div></div>
+      <figure class="interview-figure"><img src="assets/interview/iv08_talk2.jpg" alt="Behind the interview" loading="lazy"><figcaption><span data-en>Behind the interview</span><span data-jp>対談風景</span><span>08</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>もっとも、あなた以外の人だったら、設定から始めてもらっていたかもしれません。</p><p data-en>Although, if it had been anyone but you, I might have asked them to start from the backstory.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>そうなんですか。</p><p data-en>Is that so.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>あなたが描く一枚絵のデザインには、そういう情報がすでに宿っていると、ずっと感じてきました。あなたのキャラクターは、絵の段階ですでに物語を背負っている。そこが、僕がオルタナティブだと感じる点です。〈IKUSA〉も、明らかに何かを背負っているように見える——何かに苛立っているような、あるいは何かを宣言しようとしているような。それだけで十分なんです。</p><p data-en>With the single-image designs you draw, I've always felt that kind of information is already in there. Your characters are already carrying a story at the drawing stage. That's what I find alternative about them. IKUSA, too, clearly seems to be carrying something — like she's irritated about something, or she's about to make a statement. That alone is enough, isn't it.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>そうかもしれません。だからこそ、たとえば髪にハイライトの色が入っている。それが入っているということは、理由があるということ。そのディテールがあるだけで十分で——それ以上は何も説明しない。</p><p data-en>Maybe so. That's why, for instance, there's a highlight colour in her hair. The fact that it's there means there's a reason. Just having that detail is enough — I don't explain anything beyond it.</p></div></div>
+      <figure class="interview-figure portrait"><img src="assets/interview/iv09_highlight.jpg" alt="A single detail" loading="lazy"><figcaption><span data-en>A single detail</span><span data-jp>髪のハイライト</span><span>09</span></figcaption></figure>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>そもそも釘の刺さったバットを持っているのだから、何かを考えているのは明らかです。それで十分。</p><p data-en>She's holding a bat with nails in it to begin with, so she's clearly thinking something. That's plenty.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>ええ。</p><p data-en>Yeah.</p></div></div>
       <div class="turn koyanagi"><div class="who">Koyanagi</div><div><p data-jp>これは、記念すべき最初の作品です。wazawaza はこれからも、世界中のユーザーの理想と夢を叶えるために力を尽くしていきます。これからもよろしくお願いします。ありがとうございました。</p><p data-en>This is our momentous first piece. wazawaza will keep working hard to make the ideals and dreams of users around the world come true. We look forward to continuing on. Thank you.</p></div></div>
       <div class="turn asano"><div class="who">Asano</div><div><p data-jp>ありがとうございました。</p><p data-en>Thank you.</p></div></div>
+
+      <figure class="interview-figure" style="margin-bottom:8px"><img src="assets/interview/iv10_artist.jpg" alt="Inio Asano × IKUSA" loading="lazy"><figcaption><span data-en>Inio Asano × IKUSA</span><span>10</span></figcaption></figure>
 
       <div class="interview-foot">
         <span>Inio Asano × Daisuke Koyanagi</span>
@@ -2007,7 +2081,7 @@
     </div>
 
     <div class="copy">
-      <div>© 2026 MN Inc.</div>
+      <div>© 2026 All rights reserved.</div>
     </div>
   </div>
 </footer>
