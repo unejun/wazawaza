@@ -134,6 +134,7 @@
   /* Hero edition: plain small label (no bubble) */
 
   *{box-sizing:border-box;margin:0;padding:0}
+  .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   html,body{background:var(--bg);color:var(--ink);font-family:var(--sans-jp);
     font-weight:700;line-height:1.35;letter-spacing:.02em;font-size:16px;overflow-x:hidden;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
@@ -618,7 +619,7 @@
   .footer-grid p{font-size:14.5px;font-weight:400;color:var(--ink-2);line-height:1.95;max-width:46ch;margin-top:4px}
   .footer-mark{font-family:var(--serif-en);font-style:italic;font-weight:600;font-size:30px;display:flex;align-items:center;gap:12px;margin-bottom:14px}
   .footer-mark .dot{width:7px;height:7px;background:var(--accent);border-radius:50%}
-  .footer-grid h5{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;text-align:center}
+  .footer-grid h3{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;text-align:center}
   .footer-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px;align-items:center}
   .footer-grid ul a{font-size:20px;font-weight:500;color:var(--ink-2);border-bottom:1px solid transparent;padding-bottom:2px}
   .footer-grid ul a:hover{border-color:var(--ink-2)}
@@ -640,6 +641,7 @@
 
   /* ──────── LIGHTBOX ──────── */
   .c-gal-card{cursor:zoom-in}
+  .c-gal-card:focus-visible{outline:3px solid #e81878;outline-offset:3px}
   .lightbox{position:fixed;inset:0;z-index:200;background:rgba(8,8,9,.94);display:none;
     align-items:center;justify-content:center;padding:24px}
   .lightbox.open{display:flex}
@@ -648,6 +650,7 @@
     border:1px solid rgba(242,240,236,.3);background:transparent;color:#f2f0ec;font-size:24px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;line-height:1}
   .lightbox .lb-close:hover{background:rgba(242,240,236,.12)}
+  .lightbox .lb-close:focus-visible{outline:2px solid #f2f0ec;outline-offset:2px}
 
   /* ──────── i18n hide ──────── */
   [data-lang="en"] [data-jp],
@@ -1082,14 +1085,15 @@
   .faq-a p.en{font-family:var(--serif-en);font-style:normal;color:var(--ink);margin-bottom:12px;font-size:15px;line-height:1.8}
 
   .faq-cta{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:32px;text-align:center}
-  .faq-cta a{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:0;
+  .faq-cta button{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:0;
     padding:15px 30px;border:1px solid var(--rule-strong);border-radius:999px;color:var(--ink);
-    background:transparent;transition:background .2s,border-color .2s,color .2s;text-decoration:none}
-  .faq-cta a:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-  .faq-cta a .main{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
-  .faq-cta a .sub{font-family:var(--serif-jp);font-weight:600;font-size:14px;letter-spacing:.06em;color:inherit}
-  [data-lang="ja"] .faq-cta a .main{display:none}
-  [data-lang="en"] .faq-cta a .sub{display:none}
+    background:transparent;transition:background .2s,border-color .2s,color .2s;text-decoration:none;
+    font:inherit;appearance:none;-webkit-appearance:none;cursor:pointer}
+  .faq-cta button:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .faq-cta button .main{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+  .faq-cta button .sub{font-family:var(--serif-jp);font-weight:600;font-size:14px;letter-spacing:.06em;color:inherit}
+  [data-lang="ja"] .faq-cta button .main{display:none}
+  [data-lang="en"] .faq-cta button .sub{display:none}
 
   @media (max-width:640px){
     .faq-q .en{font-size:14px}
@@ -1427,8 +1431,14 @@
   .c-hero{position:relative;width:100%;background:#000;overflow:hidden}
   /* Video fits the browser width at its natural height — whole frame visible, no crop */
   .c-hero-video{position:relative;display:block;width:100%;height:auto}
-  .c-hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(180deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 55%,rgba(0,0,0,.42) 100%)}
+  /* KV play/pause control — 32px visual disc, 44px hit area, opaque (meets 1.4.11) */
+  .c-kv-toggle{position:absolute;right:16px;bottom:16px;width:44px;height:44px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;outline:none;-webkit-tap-highlight-color:transparent}
+  .c-kv-toggle .disc{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #FFE000;color:#FFE000;display:flex;align-items:center;justify-content:center}
+  .c-kv-toggle svg{width:15px;height:15px;display:block;fill:currentColor}
+  .c-kv-toggle:focus-visible .disc{outline:3px solid #fff;outline-offset:2px}
+  /* Gradient scrim removed: it dimmed the video's baked KV text to grey (top up to 34%,
+     bottom up to 42% black). The header is a solid yellow bar above the video (no overlap)
+     and the pause button sits on the video's pure-black corner, so removal harms neither. */
   .c-hero-credit{position:absolute;left:clamp(16px,3.5vw,52px);top:clamp(16px,3.5vw,40px);z-index:2;color:#fff}
   .c-hero-credit-lbl{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;
     font-size:clamp(11px,1vw,13px);letter-spacing:.16em;text-transform:uppercase}
@@ -1475,7 +1485,7 @@
     display:inline-flex;flex-direction:column;align-items:center;gap:5px}
   .c-gal-dots .d{width:9px;height:9px;border-radius:50%;background:#0000;border:2px solid #000;transition:background .2s}
   .c-gal-dots button.active .d{background:#000}
-  .c-gal-dots .num{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;color:#000;opacity:.55}
+  .c-gal-dots .num{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;color:#000;opacity:.56}
   .c-gal-dots button.active .num{opacity:1;font-weight:700}
 
   /* ─────── SPEC (sanmenzu) ─────── */
@@ -1502,7 +1512,7 @@
   .c-vision-title{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;font-size:38px;line-height:1.2;color:#000;margin-bottom:20px}
   .vision-statement[data-en]{font-family:"Helvetica Neue",Helvetica,Arial,"Noto Sans JP",sans-serif;
     font-weight:800;font-size:20px;line-height:1.6;color:#000}
-  .vision-statement .acc{color:var(--cpink)}
+  .vision-statement .acc{color:var(--cpink);font-size:19px}
   .article p[data-en]{color:#000}
   .article-h{color:#000}
   .interview-body p[data-en], .interview .turn p[data-en]{font-size:22px;line-height:1.7;color:#000}
@@ -1575,7 +1585,8 @@
 
   /* interview: names 22pt, Asano pink / Koyanagi black */
   .interview .who{color:#000!important}
-  .interview .turn.asano .who{color:var(--cpink)!important}
+  .interview .turn.asano .who{color:var(--cpink)!important;font-size:19px!important}
+  .interview .turn.koyanagi .who{font-size:19px!important}
   .turn{grid-template-columns:132px 1fr!important;gap:24px!important}
   .turn .who{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-weight:800!important;
     font-size:10px!important;letter-spacing:.08em!important;text-transform:none!important;padding-top:5px!important}
@@ -1583,7 +1594,7 @@
 
   /* process: chapter title 38pt / body 22pt */
   .chapter-no{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-weight:800!important;
-    font-size:15px!important;letter-spacing:.06em!important;color:var(--cpink)!important}
+    font-size:19px!important;letter-spacing:.06em!important;color:var(--cpink)!important}
   .chapter-title .en{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-style:normal!important;
     font-weight:800!important;font-size:38px!important;line-height:1.05!important;color:#000!important}
   .chapter p{font-size:19px!important;line-height:1.75!important;color:#000!important}
@@ -1598,9 +1609,9 @@
   .faq-icon::before,.faq-icon::after{background:#000!important}
   .faq-intro .en{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-style:normal!important;font-weight:700!important;font-size:20px!important;color:#000}
   .faq-cta{align-items:center}
-  .faq-cta a{border:2px solid #000!important;color:#000!important;border-radius:999px}
-  .faq-cta a:hover{background:#000!important;color:var(--cyellow)!important}
-  .faq-cta a .main{font-size:15px!important}
+  .faq-cta button{border:2px solid #000!important;color:#000!important;border-radius:999px}
+  .faq-cta button:hover{background:#000!important;color:var(--cyellow)!important}
+  .faq-cta button .main{font-size:15px!important}
 
   @media (max-width:640px){
     .c-hero{height:auto!important;min-height:0!important;max-height:none!important}
@@ -1634,7 +1645,7 @@
   @media(max-width:900px){.turn .who,.interview .turn .who{font-size:15px!important}}
 
   /* == item 12: Inquiry button + Legal heading -> Helvetica bold == */
-  .faq-cta a,.faq-cta .main,.faq-cta .sub,.footer-grid h5{
+  .faq-cta button,.faq-cta .main,.faq-cta .sub,.footer-grid h3{
     font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif!important;font-weight:700!important}
 
   /* == items 3-5: gallery plates pin-corner, no border, yellow gaps == */
@@ -1649,7 +1660,7 @@
     max-width:1080px;margin:0 auto;padding:0 clamp(20px,4vw,44px);align-items:start}
   .c-kvsched-grid > div{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
   .c-kvsched .k{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:700;font-size:clamp(11px,1.3vw,14px);letter-spacing:.14em;text-transform:uppercase;color:var(--cpink);line-height:1.1}
+    font-weight:700;font-size:19px;letter-spacing:.14em;text-transform:uppercase;color:var(--cpink);line-height:1.1}
   .c-kvsched .v{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight:800;font-size:clamp(22px,2.8vw,34px);color:#000;line-height:1.1;white-space:nowrap}
   .c-kvsched .note{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -1704,33 +1715,58 @@
 </div>
 
 <!-- ════════ HERO (video) ════════ -->
+<main id="main">
+<h1 class="visually-hidden">wazawaza #001 IKUSA</h1>
 <section class="c-hero" id="hero">
   <video id="c-hero-video" class="c-hero-video" autoplay muted loop playsinline preload="auto" poster="assets/c/KV_top_pc.jpg"></video>
+  <button type="button" id="c-kv-toggle" class="c-kv-toggle" aria-label="Pause background video"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></span></button>
 </section>
 <script>
 (function(){
   var v=document.getElementById('c-hero-video'); if(!v) return;
+  var btn=document.getElementById('c-kv-toggle');
   var mq=window.matchMedia('(max-width:768px)');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var userPaused=false;
+  var play=function(){ if(reduce||userPaused) return; var p=v.play(); if(p&&p.catch) p.catch(function(){}); };
+  var ICON_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>';
+  var ICON_PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>';
+  function reflect(){
+    if(!btn) return;
+    var playing=!v.paused;
+    var disc=btn.querySelector('.disc');
+    if(disc) disc.innerHTML=playing?ICON_PAUSE:ICON_PLAY;
+    btn.setAttribute('aria-label', playing?'Pause background video':'Play background video');
+  }
   function set(){
     var sp=mq.matches;
+    v.poster=sp?'assets/c/KV_top_sp.jpg':'assets/c/KV_top_pc.jpg';
+    if(reduce) return;                       // reduced-motion: static poster, no video load/play
     var src=sp?'assets/KV_top_sp_text.mp4':'assets/KV_top_pc_text.mp4';
     if(v.getAttribute('data-src')===src) return;
     v.setAttribute('data-src',src);
-    v.poster=sp?'assets/c/KV_top_sp.jpg':'assets/c/KV_top_pc.jpg';
     v.src=src; v.load();
-    var p=v.play(); if(p&&p.catch) p.catch(function(){});
+    play(); reflect();
   }
+  if(reduce){ v.removeAttribute('autoplay'); v.pause(); if(btn) btn.hidden=true; }
   set();
   if(mq.addEventListener) mq.addEventListener('change',set); else if(mq.addListener) mq.addListener(set);
+  if(btn && !reduce){
+    btn.addEventListener('click', function(){
+      if(v.paused){ userPaused=false; play(); } else { userPaused=true; v.pause(); }
+      reflect();
+    });
+    v.addEventListener('play', reflect);
+    v.addEventListener('pause', reflect);
+    reflect();
+  }
   // Pause the (large) hero video whenever it scrolls off-screen — stops continuous
-  // video decode during the rest of the page = major scroll-perf win. Resume in view.
+  // video decode during the rest of the page = major scroll-perf win. Resume in view
+  // (but never override a manual pause, and never autoplay under reduced-motion).
   if('IntersectionObserver' in window){
-    var onScreen=true;
     var vObs=new IntersectionObserver(function(ents){
       ents.forEach(function(e){
-        onScreen=e.isIntersecting;
-        if(onScreen){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
-        else { v.pause(); }
+        if(e.isIntersecting){ play(); } else { v.pause(); }
       });
     },{threshold:0.01});
     vObs.observe(v);
@@ -1751,8 +1787,8 @@
 <!-- ════════ 01 — GALLERY ════════ -->
 <section class="sec c-gallery" id="gallery">
   <div class="wrap">
-    <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_01_sp.png"><img class="c-sechead-img" src="assets/c/title_01_gallery_pc.png" alt="01 GALLERY"></picture></div>
-    <div class="c-gal-track" id="c-gal-track">
+    <h2 class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_01_sp.png"><img class="c-sechead-img" src="assets/c/title_01_gallery_pc.png" alt="01 GALLERY"></picture></h2>
+    <div class="c-gal-track" id="c-gal-track" tabindex="0" role="group" aria-label="IKUSA gallery images (scroll horizontally)">
       <figure class="c-gal-card" data-p="12"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_12.png"><img src="assets/c/g_pc_12.png" data-galimg="1" alt="IKUSA plate 12"></picture></figure>
       <figure class="c-gal-card" data-p="11"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_11.png"><img src="assets/c/g_pc_11.png" data-galimg="1" alt="IKUSA plate 11"></picture></figure>
       <figure class="c-gal-card" data-p="10"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_10.png"><img src="assets/c/g_pc_10.png" data-galimg="1" alt="IKUSA plate 10"></picture></figure>
@@ -1766,19 +1802,19 @@
       <figure class="c-gal-card" data-p="2"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_02.png"><img src="assets/c/g_pc_02.png" data-galimg="1" alt="IKUSA plate 02"></picture></figure>
       <figure class="c-gal-card" data-p="1"><picture><source media="(max-width:768px)" srcset="assets/c/g_sp_01.png"><img src="assets/c/g_pc_01.png" data-galimg="1" alt="IKUSA plate 01"></picture></figure>
     </div>
-    <div class="c-gal-dots" id="c-gal-dots" role="tablist" aria-label="Gallery navigation">
-        <button type="button" data-p="12" aria-label="Plate 12"><span class="d"></span><span class="num">P12</span></button>
-        <button type="button" data-p="11" aria-label="Plate 11"><span class="d"></span><span class="num">P11</span></button>
-        <button type="button" data-p="10" aria-label="Plate 10"><span class="d"></span><span class="num">P10</span></button>
-        <button type="button" data-p="9" aria-label="Plate 09"><span class="d"></span><span class="num">P9</span></button>
-        <button type="button" data-p="8" aria-label="Plate 08"><span class="d"></span><span class="num">P8</span></button>
-        <button type="button" data-p="7" aria-label="Plate 07"><span class="d"></span><span class="num">P7</span></button>
-        <button type="button" data-p="6" aria-label="Plate 06"><span class="d"></span><span class="num">P6</span></button>
-        <button type="button" data-p="5" aria-label="Plate 05"><span class="d"></span><span class="num">P5</span></button>
-        <button type="button" data-p="4" aria-label="Plate 04"><span class="d"></span><span class="num">P4</span></button>
-        <button type="button" data-p="3" aria-label="Plate 03"><span class="d"></span><span class="num">P3</span></button>
-        <button type="button" data-p="2" aria-label="Plate 02"><span class="d"></span><span class="num">P2</span></button>
-        <button type="button" data-p="1" class="active" aria-label="Plate 01"><span class="d"></span><span class="num">P1</span></button>
+    <div class="c-gal-dots" id="c-gal-dots" role="group" aria-label="Gallery navigation">
+        <button type="button" data-p="12" aria-label="P12"><span class="d"></span><span class="num">P12</span></button>
+        <button type="button" data-p="11" aria-label="P11"><span class="d"></span><span class="num">P11</span></button>
+        <button type="button" data-p="10" aria-label="P10"><span class="d"></span><span class="num">P10</span></button>
+        <button type="button" data-p="9" aria-label="P9"><span class="d"></span><span class="num">P9</span></button>
+        <button type="button" data-p="8" aria-label="P8"><span class="d"></span><span class="num">P8</span></button>
+        <button type="button" data-p="7" aria-label="P7"><span class="d"></span><span class="num">P7</span></button>
+        <button type="button" data-p="6" aria-label="P6"><span class="d"></span><span class="num">P6</span></button>
+        <button type="button" data-p="5" aria-label="P5"><span class="d"></span><span class="num">P5</span></button>
+        <button type="button" data-p="4" aria-label="P4"><span class="d"></span><span class="num">P4</span></button>
+        <button type="button" data-p="3" aria-label="P3"><span class="d"></span><span class="num">P3</span></button>
+        <button type="button" data-p="2" aria-label="P2"><span class="d"></span><span class="num">P2</span></button>
+        <button type="button" data-p="1" class="active" aria-current="true" aria-label="P1"><span class="d"></span><span class="num">P1</span></button>
     </div>
   </div>
 </section>
@@ -1809,7 +1845,7 @@
 <section class="sec halftone-bg" id="overview">
   <div class="wrap">
     <div class="sec-head">
-      <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_02_sp.png"><img class="c-sechead-img" src="assets/c/title_02_gallery_pc.png" alt="02 STATEMENT"></picture></div>
+      <h2 class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_02_sp.png"><img class="c-sechead-img" src="assets/c/title_02_gallery_pc.png" alt="02 STATEMENT"></picture></h2>
       <div class="article">
       <h3 class="c-vision-title">About wazawaza</h3>
       <p class="vision-statement" data-en>In collaboration with Japanese manga artists, wazawaza creates strictly limited pieces, built on Japanese craftsmanship.</p>
@@ -1831,7 +1867,7 @@
 
       <div class="article-rule"></div>
 
-      <h2 class="article-h">IKUSA</h2>
+      <h3 class="article-h">IKUSA</h3>
 
       <p data-jp>wazawaza の最初の作品は、日本を代表する漫画家であり、第一級のキャラクターデザイナーでもある浅野いにお氏による、完全オリジナルのデザインを立体化したものです。全高はおよそ140センチ。その存在感は、実物の前に立ってこそ伝わります。</p>
       <p data-en>The first work from wazawaza brings into three dimensions an entirely original design by Inio Asano — one of Japan's most celebrated manga artists, and a character designer of the first rank. At nearly 140 centimetres, her presence is meant to be felt in person.</p>
@@ -1850,7 +1886,7 @@
 <section class="sec" id="interview">
   <div class="wrap">
     <div class="sec-head">
-      <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_03_sp.png"><img class="c-sechead-img" src="assets/c/title_03_gallery_pc.png" alt="03 INTERVIEW"></picture></div>
+      <h2 class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_03_sp.png"><img class="c-sechead-img" src="assets/c/title_03_gallery_pc.png" alt="03 INTERVIEW"></picture></h2>
       <div class="interview">
       <figure class="interview-top-figure"><img src="assets/interview/iv01_lead.jpg" alt="Inio Asano × Daisuke Koyanagi" loading="lazy"><figcaption><span data-en>INIO ASANO (Manga Artist) &times; DAISUKE KOYANAGI (wazawaza Producer)</span></figcaption></figure>
       <div class="interview-body collapsed" id="interview-body">
@@ -1941,7 +1977,7 @@
 <section class="sec halftone-bg" id="flow">
   <div class="wrap">
     <div class="sec-head">
-      <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_04_sp.png"><img class="c-sechead-img" src="assets/c/title_04_gallery_pc.png" alt="04 PROCESS"></picture></div>
+      <h2 class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_04_sp.png"><img class="c-sechead-img" src="assets/c/title_04_gallery_pc.png" alt="04 PROCESS"></picture></h2>
       <div class="chapters">
         <div class="chapter">
           <div class="chapter-no">Chapter 01</div>
@@ -1970,7 +2006,7 @@
 <section class="sec" id="guarantee">
   <div class="wrap">
     <div class="sec-head">
-      <div class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_05_sp.png"><img class="c-sechead-img" src="assets/c/title_05_gallery_pc.png" alt="05 FAQ"></picture></div>
+      <h2 class="c-sechead reveal"><picture><source media="(max-width:768px)" srcset="assets/c/title_05_sp.png"><img class="c-sechead-img" src="assets/c/title_05_gallery_pc.png" alt="05 FAQ"></picture></h2>
       <div class="faq">
         <p class="faq-intro">
           <span class="en">Please review the Q&amp;A before reaching out.</span>
@@ -2056,22 +2092,23 @@
         </details>
 
         <div class="faq-cta">
-          <a style="cursor: pointer" data-tf-popup="juHVs6yG" role="button" tabindex="0">
+          <button type="button" data-tf-popup="juHVs6yG">
             <span class="main">Send an Inquiry</span>
             <span class="sub">お問い合わせを送る</span>
-          </a>
+          </button>
         </div>
       </div>
     </div>
   </div>
 </section>
+</main>
 
 <!-- ════════ FOOTER ════════ -->
 <footer>
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <h5>Legal</h5>
+        <h3>Legal</h3>
         <ul>
           <li><a href="legal-tokushoho.html" data-legal="legal-tokushoho"><span data-jp>特定商取引法に基づく表記</span><span data-en>Act on Specified Commercial Transactions</span></a></li>
           <li><a href="legal-privacy.html" data-legal="legal-privacy"><span data-jp>プライバシーポリシー</span><span data-en>Privacy policy</span></a></li>
@@ -2244,7 +2281,7 @@
       const p = allCards[idx].getAttribute('data-p');
       if (p === lastActiveP) return;                                  // skip DOM writes when unchanged
       lastActiveP = p;
-      dots.forEach(dt => dt.classList.toggle('active', dt.getAttribute('data-p') === p));
+      dots.forEach(dt => { const on = dt.getAttribute('data-p') === p; dt.classList.toggle('active', on); if (on) dt.setAttribute('aria-current', 'true'); else dt.removeAttribute('aria-current'); });
     }
 
     let uaTick = 0;
@@ -2301,6 +2338,15 @@
       if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
       cancelTween(); pauseNow(); if (!pointerDown) scheduleResume();
     }, { passive: true });
+    // keyboard: Arrow / Home / End / PageUp-Down on the focused track scroll it
+    // natively; pause the drift so the browser scroll isn't overwritten each frame.
+    track.addEventListener('keydown', (e) => {
+      if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown'].indexOf(e.key) === -1) return;
+      cancelTween(); pauseNow(); scheduleResume();
+    }, { passive: true });
+    // Keep a keyboard-focused plate stationary — pause the drift while focus is inside.
+    track.addEventListener('focusin', function () { cancelTween(); pauseNow(); });
+    track.addEventListener('focusout', function (e) { if (!track.contains(e.relatedTarget)) scheduleResume(); });
     // While drifting, step() updates dots (throttled). Only do work here for
     // USER scrolls (paused): re-arm resume after momentum + refresh the dot.
     track.addEventListener('scroll', () => { if (paused && !clickHold) { if (!pointerDown) scheduleResume(); updateActive(); } }, { passive: true });
@@ -2313,7 +2359,7 @@
         const p = dt.getAttribute('data-p');
         // Authoritatively highlight the CLICKED dot — never let center-detection
         // (which can tie to a neighbor on some render environments) override it.
-        dots.forEach(d => d.classList.toggle('active', d === dt));
+        dots.forEach(d => { d.classList.toggle('active', d === dt); if (d === dt) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
         lastActiveP = p;
         const cur = track.scrollLeft;
         const ml = maxLeft();
@@ -2397,7 +2443,7 @@
     });
   })();
 </script>
-<div class="lightbox" id="lightbox" aria-hidden="true">
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Enlarged gallery image">
   <button class="lb-close" id="lb-close" aria-label="Close">×</button>
   <img id="lb-img" alt="" />
 </div>
@@ -2433,25 +2479,67 @@
       document.body.style.overflow = '';
       window.scrollTo(0, lockedY);
     };
-    track.addEventListener('click', (e) => {
-      if (moved) return;
-      const card = e.target.closest('.c-gal-card');
-      if (!card) return;
+    // Inert + hide the background while the lightbox is open (same pattern as the legal modal).
+    const setBg = (hide) => {
+      Array.prototype.forEach.call(document.body.children, (el) => {
+        if (el === lb || el.tagName === 'SCRIPT' || el.tagName === 'TEMPLATE' || el.tagName === 'STYLE') return;
+        if (hide) {
+          if (!el.hasAttribute('data-lb-pa')) el.setAttribute('data-lb-pa', el.getAttribute('aria-hidden') || '');
+          el.setAttribute('aria-hidden', 'true'); el.setAttribute('inert', '');
+        } else {
+          const pa = el.getAttribute('data-lb-pa');
+          if (pa) el.setAttribute('aria-hidden', pa); else el.removeAttribute('aria-hidden');
+          el.removeAttribute('data-lb-pa'); el.removeAttribute('inert');
+        }
+      });
+    };
+    // Make the real plates keyboard-operable; hide the infinite-loop clones from AT + Tab.
+    Array.prototype.forEach.call(track.querySelectorAll('.c-gal-card'), (card) => {
+      if (card.hasAttribute('data-clone')) {
+        card.setAttribute('tabindex', '-1'); card.setAttribute('aria-hidden', 'true');
+      } else {
+        card.setAttribute('tabindex', '0'); card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', 'View plate ' + (card.getAttribute('data-p') || '') + ' enlarged');
+      }
+    });
+    let lastCard = null;
+    const openCard = (card) => {
       const si = card.querySelector('img');
       const src = si && (si.currentSrc || si.src);
       if (!src) return;
+      lastCard = card;
       img.src = src;
+      img.alt = si.getAttribute('alt') || '';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
-      lockScroll();
+      lockScroll(); setBg(true);
+      if (cl) cl.focus();
+    };
+    track.addEventListener('click', (e) => {
+      if (moved) return;
+      const card = e.target.closest('.c-gal-card');
+      if (card) openCard(card);
+    });
+    track.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+      const card = e.target.closest('.c-gal-card');
+      if (!card || card.hasAttribute('data-clone')) return;
+      e.preventDefault(); openCard(card);
     });
     // block background scroll from wheel / touch while the lightbox is open
     lb.addEventListener('wheel', (e) => { e.preventDefault(); }, { passive: false });
     lb.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
-    const close = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); unlockScroll(); img.removeAttribute('src'); };
+    const close = () => {
+      lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
+      unlockScroll(); img.removeAttribute('src'); setBg(false);
+      if (lastCard && lastCard.focus) lastCard.focus();
+      lastCard = null;
+    };
     cl && cl.addEventListener('click', close);
     lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
+    // Focus trap: the close button is the only focusable element in the lightbox.
+    lb.addEventListener('keydown', (e) => { if (e.key === 'Tab') { e.preventDefault(); if (cl) cl.focus(); } });
   })();
 </script>
 
@@ -2571,13 +2659,13 @@
     .legal-sheet{width:100%;height:100dvh;max-height:100dvh;border-radius:0}
   }
 </style>
-<div class="legal-overlay" id="legal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+<div class="legal-overlay" id="legal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="legal-title">
   <div class="legal-sheet">
     <div class="legal-bar">
       <span class="t" id="legal-title">Legal</span>
       <button class="legal-close" id="legal-close" type="button" aria-label="Close">×</button>
     </div>
-    <div class="legal-frame" id="legal-host"></div>
+    <div class="legal-frame" id="legal-host" tabindex="0" role="document"></div>
   </div>
 </div>
 <script>
@@ -2590,6 +2678,24 @@
     const closeBtn = document.getElementById('legal-close');
     if (!overlay || !host) return;
     let shadow = null;
+    let lastTrigger = null;
+    // Make everything except the dialog inert + hidden from AT while open
+    // (traps focus in the modal and removes background links from the a11y tree).
+    const setBackground = (hide) => {
+      Array.prototype.forEach.call(document.body.children, (el) => {
+        if (el === overlay || el.tagName === 'SCRIPT' || el.tagName === 'TEMPLATE' || el.tagName === 'STYLE') return;
+        if (hide) {
+          if (!el.hasAttribute('data-legal-pa')) el.setAttribute('data-legal-pa', el.getAttribute('aria-hidden') || '');
+          el.setAttribute('aria-hidden', 'true');
+          el.setAttribute('inert', '');
+        } else {
+          const pa = el.getAttribute('data-legal-pa');
+          if (pa) el.setAttribute('aria-hidden', pa); else el.removeAttribute('aria-hidden');
+          el.removeAttribute('data-legal-pa');
+          el.removeAttribute('inert');
+        }
+      });
+    };
     const open = (id, label) => {
       const store = document.getElementById('embed-' + id);
       if (!store) return false;
@@ -2609,6 +2715,8 @@
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       host.scrollTop = 0;
+      setBackground(true);
+      if (closeBtn) closeBtn.focus();
       return true;
     };
     const close = () => {
@@ -2616,17 +2724,28 @@
       overlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       if (shadow) shadow.innerHTML = '';
+      setBackground(false);
+      if (lastTrigger && lastTrigger.focus) lastTrigger.focus();
+      lastTrigger = null;
     };
     document.querySelectorAll('a[data-legal]').forEach((a) => {
       a.addEventListener('click', (e) => {
         const id = a.getAttribute('data-legal');
         const label = (a.querySelector('[data-en]') || a).textContent.trim();
+        lastTrigger = a;
         if (open(id, label)) e.preventDefault();
       });
     });
     closeBtn && closeBtn.addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
+    // Focus trap: only the close button and the scrollable body are focusable in the
+    // dialog (legal content has no links), so cycle Tab between just those two.
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || !overlay.classList.contains('open')) return;
+      if (e.shiftKey && document.activeElement === closeBtn) { e.preventDefault(); host.focus(); }
+      else if (!e.shiftKey && document.activeElement === host) { e.preventDefault(); closeBtn.focus(); }
+    });
   })();
 </script>
 <script type="text/html" id="embed-legal-tokushoho"><!DOCTYPE html>
@@ -3725,8 +3844,79 @@
   })();
 </script>
 
-<!-- Typeform popup embed (Submit an Offer button) -->
+<!-- Typeform popup embed (Submit an Offer + Send an Inquiry buttons) -->
 <script src="https://embed.typeform.com/next/embed.js"></script>
+<script>
+  // Typeform's popup does not trap keyboard focus, so Tab leaks to the page behind it
+  // (WCAG 2.4.3). Apply the same background-inert protection the legal modal uses, to
+  // EVERY [data-tf-popup] trigger. The popup is inserted at body level and must itself
+  // stay interactive, so it is explicitly excluded from the inert set.
+  (function () {
+    var lastTfTrigger = null, tfOpen = false, g1 = null, g2 = null;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-tf-popup]'), function (el) {
+      el.addEventListener('click', function () { lastTfTrigger = el; });
+    });
+    function inTypeform(el, popups) {
+      for (var i = 0; i < popups.length; i++) { if (el === popups[i] || el.contains(popups[i])) return true; }
+      return false;
+    }
+    // Inert every body child except the Typeform popup and our sentinels, so the tab
+    // sequence is confined to [sentinel, iframe, close, sentinel] — never the page or browser UI.
+    function setBackground(hide) {
+      var popups = document.querySelectorAll('.tf-v1-popup');
+      Array.prototype.forEach.call(document.body.children, function (el) {
+        if (el.tagName === 'SCRIPT' || el.tagName === 'TEMPLATE' || el.tagName === 'STYLE') return;
+        if (el.hasAttribute('data-tf-guard')) return;       // sentinels stay interactive
+        if (inTypeform(el, popups)) return;                 // the Typeform popup stays interactive
+        if (hide) {
+          if (!el.hasAttribute('data-tf-pa')) el.setAttribute('data-tf-pa', el.getAttribute('aria-hidden') || '');
+          el.setAttribute('aria-hidden', 'true'); el.setAttribute('inert', '');
+        } else {
+          var pa = el.getAttribute('data-tf-pa');
+          if (pa) el.setAttribute('aria-hidden', pa); else el.removeAttribute('aria-hidden');
+          el.removeAttribute('data-tf-pa'); el.removeAttribute('inert');
+        }
+      });
+    }
+    function iframeEl() { var pf = document.querySelector('.tf-v1-popup'); return pf ? pf.querySelector('iframe') : null; }
+    function closeEl() { var pf = document.querySelector('.tf-v1-popup'); return pf ? pf.querySelector('.tf-v1-close') : null; }
+    function focusForm() { var f = iframeEl(); if (f) { try { f.focus(); } catch (e) {} } }
+    function mkSentinel() {
+      var g = document.createElement('span');
+      g.tabIndex = 0; g.setAttribute('data-tf-guard', '');
+      g.style.cssText = 'position:fixed;width:1px;height:1px;padding:0;margin:0;overflow:hidden;opacity:0;pointer-events:none';
+      return g;
+    }
+    function onEsc(e) { if (e.key === 'Escape' && tfOpen) { var c = closeEl(); if (c) c.click(); } }
+    var mo = new MutationObserver(function () {
+      var popup = document.querySelector('.tf-v1-popup');
+      if (popup && !tfOpen) {
+        tfOpen = true;
+        // Sentinels immediately BEFORE and AFTER the popup (siblings). The iframe is
+        // cross-origin — we can't see focus inside it — but native Tab / Shift+Tab exits the
+        // iframe onto these sentinels, where we redirect, so focus never reaches the browser UI.
+        g1 = mkSentinel(); g2 = mkSentinel();
+        g1.addEventListener('focus', function () { var c = closeEl(); if (c) c.focus(); }); // start sentinel (Shift+Tab out of iframe) -> close
+        g2.addEventListener('focus', focusForm);                                            // end sentinel (Tab past close) -> iframe
+        popup.parentNode.insertBefore(g1, popup);
+        if (popup.nextSibling) popup.parentNode.insertBefore(g2, popup.nextSibling); else popup.parentNode.appendChild(g2);
+        document.addEventListener('keydown', onEsc, true);   // Esc closes when focus is on a parent-level element
+        setBackground(true);
+        focusForm();                                         // initial focus = the form, not the close button
+        setTimeout(function () { if (document.activeElement === closeEl()) focusForm(); }, 200); // beat Typeform's own focus
+      } else if (!popup && tfOpen) {
+        tfOpen = false;
+        document.removeEventListener('keydown', onEsc, true);
+        if (g1 && g1.parentNode) g1.parentNode.removeChild(g1);
+        if (g2 && g2.parentNode) g2.parentNode.removeChild(g2);
+        g1 = g2 = null;
+        setBackground(false);
+        if (lastTfTrigger && lastTfTrigger.focus) lastTfTrigger.focus();
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
 <script>
   /* Pin-header offset: fixed header is out of flow, so reserve exactly its
      measured height as body padding — flush hero on every width/zoom. */
