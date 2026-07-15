@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(awk:*)",
+      "Bash(ls:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(git merge:*)",
+      "Bash(git checkout:*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(sed:*)",
+      "Write",
+      "Edit"
+    ]
+  }
+}
