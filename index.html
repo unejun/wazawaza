@@ -3888,6 +3888,28 @@
       return g;
     }
     function onEsc(e) { if (e.key === 'Escape' && tfOpen) { var c = closeEl(); if (c) c.click(); } }
+    // Background scroll-lock while the popup is open. overflow:hidden alone does not hold on
+    // iOS Safari, so we pin <body> with position:fixed and offset it by the current scroll
+    // position; restoring the offset on release keeps the page exactly where it was (no jump).
+    var lockedScrollY = 0;
+    function lockScroll() {
+      lockedScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      var sbw = window.innerWidth - document.documentElement.clientWidth; // reserve scrollbar gutter (no reflow)
+      var b = document.body;
+      b.style.top = (-lockedScrollY) + 'px';
+      b.style.left = '0'; b.style.right = '0'; b.style.width = '100%';
+      if (sbw > 0) b.style.paddingRight = sbw + 'px';
+      b.style.position = 'fixed';
+      b.setAttribute('data-tf-scrolllock', '');
+    }
+    function unlockScroll() {
+      var b = document.body;
+      if (!b.hasAttribute('data-tf-scrolllock')) return;
+      b.style.position = ''; b.style.top = ''; b.style.left = ''; b.style.right = '';
+      b.style.width = ''; b.style.paddingRight = '';
+      b.removeAttribute('data-tf-scrolllock');
+      window.scrollTo(0, lockedScrollY);   // restore exact position (no scroll-to-top)
+    }
     var mo = new MutationObserver(function () {
       var popup = document.querySelector('.tf-v1-popup');
       if (popup && !tfOpen) {
@@ -3901,6 +3923,7 @@
         popup.parentNode.insertBefore(g1, popup);
         if (popup.nextSibling) popup.parentNode.insertBefore(g2, popup.nextSibling); else popup.parentNode.appendChild(g2);
         document.addEventListener('keydown', onEsc, true);   // Esc closes when focus is on a parent-level element
+        lockScroll();                                        // freeze the page behind the popup
         setBackground(true);
         focusForm();                                         // initial focus = the form, not the close button
         setTimeout(function () { if (document.activeElement === closeEl()) focusForm(); }, 200); // beat Typeform's own focus
@@ -3912,6 +3935,7 @@
         g1 = g2 = null;
         setBackground(false);
         if (lastTfTrigger && lastTfTrigger.focus) lastTfTrigger.focus();
+        unlockScroll();                                      // release + restore scroll position last (beats focus scroll)
       }
     });
     mo.observe(document.body, { childList: true, subtree: true });
