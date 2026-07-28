@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- title is set from WORKS_LABEL below; this is the no-JS fallback -->
+<title>Works — wazawaza</title>
+<style>
+  :root{ --bg:#faf9f5; --ink:#1d1d1f; --muted:#6e6e73; --line:#e6e3db; --accent:#9a2a1f; --yellow:#FFE000; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height:1.6; padding:64px 24px 96px;
+  }
+  .wrap{ max-width:880px; margin:0 auto; }
+  header.brand{ text-align:center; padding-bottom:28px; margin-bottom:44px; border-bottom:1px solid var(--line); }
+  .brand .logo{ font-weight:700; letter-spacing:2px; font-size:22px; text-transform:lowercase; }
+  h1{ font-size:clamp(28px,5vw,42px); font-weight:800; letter-spacing:.01em; margin-bottom:6px; }
+  .lead{ color:var(--muted); font-size:14px; margin-bottom:40px; }
+  ul.works{ list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
+  li.work a{
+    display:block; text-decoration:none; color:inherit;
+    border:1px solid var(--line); border-radius:12px; padding:22px 22px 20px;
+    background:#fff; transition:border-color .18s, transform .18s;
+  }
+  li.work a:hover, li.work a:focus-visible{ border-color:var(--accent); transform:translateY(-2px); }
+  li.work a:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .work .no{ font-weight:800; font-size:12px; letter-spacing:.18em; color:var(--accent); }
+  .work .name{ font-weight:800; font-size:22px; margin-top:8px; }
+  .work .sub{ color:var(--muted); font-size:13px; margin-top:4px; }
+  footer.foot{ margin-top:72px; padding-top:22px; border-top:1px solid var(--line); text-align:center;
+    font-size:11px; letter-spacing:2px; color:var(--muted); }
+  @media (max-width:640px){ body{ padding:40px 16px 64px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="brand">
+    <div class="logo">wazawaza</div>
+  </header>
+
+  <main>
+    <!-- Heading text is applied from WORKS_LABEL (single source, see script below). -->
+    <h1 id="works-heading">Works</h1>
+    <p class="lead">A record of releases.</p>
+
+    <ul class="works">
+      <li class="work">
+        <a href="/001/">
+          <span class="no">wazawaza #001</span>
+          <span class="name">IKUSA</span>
+          <span class="sub">Limited-edition collector art figure</span>
+        </a>
+      </li>
+      <!-- 002 以降はここに <li class="work">…<a href="/002/">…</a></li> を追加する -->
+    </ul>
+  </main>
+
+  <footer class="foot">&copy; 2026 All Rights Reserved.</footer>
+
+</div>
+
+<!-- ============================================================
+     ▼▼ 作品一覧の「表示名」はここだけ書き換える ▼▼
+     ここを書き換えると、見出し・タブのタイトルに自動反映される。
+     （Phase 2 で共通 base.js に移す予定。将来ヘッダー/ハンバーガーに
+       "Works" ナビを足すときも、共通部品からこの WORKS_LABEL を
+       参照する形にすれば 1 か所管理を保てる。）
+     ============================================================ -->
+<script>
+  const WORKS_LABEL = "Works";
+  const WORKS_PATH  = "/works/";
+
+  document.title = WORKS_LABEL + " — wazawaza";
+  document.getElementById("works-heading").textContent = WORKS_LABEL;
+</script>
+</body>
+</html>
