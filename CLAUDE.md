@@ -30,24 +30,28 @@
 
 ## ファイル構成の注意
 
-### リーガルページは「2箇所」にある — 修正時は必ず両方を書き換える
+### リーガルの構成 — 独立ページは privacy-policy だけ、他はモーダルのみ
 
-リーガルページ4つは、同じ内容が2箇所に存在する。片方だけ直すと内容がズレる。
+リーガル文書は4つ（特商法 / Privacy Policy / Terms of Use / Cookie Policy）。
+表示経路は次のとおり（2026-07 に再編）。
 
-1. **`index.html` 内に埋め込まれたもの**（LP上でモーダル表示）
-2. **各フォルダ内の `index.html`**（独立ページ）
-   - `/privacy-policy/index.html` → wazawaza.tokyo/privacy-policy
-   - `/cookie-policy/index.html`  → wazawaza.tokyo/cookie-policy
-   - `/terms/index.html`          → wazawaza.tokyo/terms
-   - `/tokushoho/index.html`      → wazawaza.tokyo/tokushoho
+- **全4つ**：各作品の `index.html` 内に埋め込まれたテンプレート
+  （`<script type="text/html" id="embed-legal-*">`）で、フッターの `data-legal`
+  リンクから **LP内モーダル表示**する。
+- **Privacy Policy だけ**：独立ページ `/privacy-policy/index.html`
+  （wazawaza.tokyo/privacy-policy）も持つ。**理由：Typeform の同意フローから
+  外部リンクで飛ばす必要があるため**（モーダルには外部から飛ばせない）。
+  全作品共通なので 002 以降も同じ URL で済む。
+- **Cookie / Terms / 特商法**：独立ページは廃止（削除済み）。**LP内モーダルのみで表示**。
+  フッターのリンクは `href="#"` ＋ `data-legal` でモーダルを起動する
+  （`#` は no-JS 時のフォールバック。遷移先ページは無い）。
 
-独立ページが必要な理由：**Typeform のフロー内からリンクで飛ばすため。**
-モーダルには外部から飛ばせない。
-修正後は、**【1】と【2】の本文が一致しているか必ず確認すること。**
-
-### 未使用ファイル（触るな）
-`legal-terms.html` / `legal-privacy.html` / `legal-cookies.html` / `legal-tokushoho.html`
-は本番未公開の古いファイル。編集しても本番に反映されない。
+修正時の注意：
+- **Privacy Policy を直すときは2箇所**（独立ページ `/privacy-policy/` と
+  埋め込み `embed-legal-privacy`）を一致させる。
+- **Cookie / Terms / 特商法 は埋め込みテンプレート1箇所だけ**（独立ページなし）。
+- 特商法は作品ごとに内容（価格・エディション数）が異なる。
+  Privacy / Cookie / Terms は全作品共通。
 
 ### 廃止済みドメイン
 `wazawaza-japan.com` は完全に廃止。本番は **wazawaza.tokyo** のみ。
