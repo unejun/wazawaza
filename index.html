@@ -237,7 +237,6 @@
 
   .hero-figure-main{margin:18px auto 0;max-width:620px;aspect-ratio:3/4;position:relative;
     background:var(--paper);border:1px solid var(--rule-strong);border-radius:10px;overflow:hidden}
-  .hero-figure-main image-slot{width:100%;height:100%;display:block}
   .hero-figure-cap{position:absolute;bottom:16px;left:18px;right:18px;display:flex;
     justify-content:space-between;align-items:flex-end;font-family:var(--mono);font-size:10px;
     font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#e8e4dc;
@@ -293,7 +292,6 @@
     padding:8px 0 12px;border-bottom:1px solid var(--rule);text-align:center}
   .creator-photo{width:108px;height:108px;border-radius:50%;overflow:hidden;
     background:var(--paper);border:1px solid var(--rule-strong);position:relative;flex-shrink:0}
-  .creator-photo image-slot{width:100%;height:100%;display:block}
 
   /* Creator: tiny SNS icons + Works inline reveal */
   .creator-sns{display:flex;align-items:center;gap:30px;justify-content:center;margin-top:6px}
@@ -358,7 +356,6 @@
   .c-gal-card{flex:0 0 380px;aspect-ratio:4/5;background:var(--paper);
     border:1px solid var(--rule);border-radius:8px;overflow:hidden;position:relative;
     scroll-snap-align:center;transition:transform .3s,opacity .3s}
-  .c-gal-card image-slot{width:100%;height:100%;display:block}
   .c-gal-card .cap{position:absolute;bottom:12px;left:14px;font-family:var(--mono);font-size:10px;
     font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#fff;
     background:rgba(29,29,31,.6);padding:5px 10px;border-radius:3px;pointer-events:none}
@@ -384,7 +381,6 @@
 
   .hero-left{position:relative;aspect-ratio:1/1;background:var(--paper);
     border:1px solid var(--rule);overflow:hidden;border-radius:8px}
-  .hero-left image-slot{width:100%;height:100%}
   .hero-corner{position:absolute;top:18px;left:18px;right:18px;display:flex;
     justify-content:space-between;font-family:var(--mono);font-size:11px;font-weight:500;
     letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);
@@ -416,7 +412,6 @@
   .hero-thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:96px}
   .thumb{aspect-ratio:1/1;background:var(--paper);border:1px solid var(--rule);
     position:relative;overflow:hidden;border-radius:8px}
-  .thumb image-slot{width:100%;height:100%}
   .thumb-cap{position:absolute;bottom:10px;left:12px;font-family:var(--mono);
     font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#bbb;
     mix-blend-mode:difference;pointer-events:none}
@@ -438,7 +433,6 @@
   /* ──────── 02 OVERVIEW ──────── */
   .overview-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
   .overview-img{aspect-ratio:1/1;background:var(--paper);border:1px solid var(--rule);position:relative;overflow:hidden;border-radius:8px}
-  .overview-img image-slot{width:100%;height:100%}
   .overview-cap{position:absolute;bottom:0;left:0;right:0;padding:14px 16px;
     background:linear-gradient(transparent,rgba(0,0,0,.4));color:#fff;
     font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
@@ -475,7 +469,6 @@
   .quality-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:24px;row-gap:64px}
   .q-card{display:flex;flex-direction:column;gap:18px}
   .q-img{aspect-ratio:1/1;background:var(--paper);border:1px solid var(--rule);position:relative;overflow:hidden;border-radius:8px}
-  .q-img image-slot{width:100%;height:100%}
   .q-card h3{font-family:var(--serif-jp);font-weight:600;font-size:24px;line-height:1.45;color:var(--ink)}
   .q-card p{font-size:15px;font-weight:400;line-height:1.95;color:var(--ink-2)}
   .q-card .lbl{margin-bottom:-4px}
@@ -971,8 +964,6 @@
     .footer-grid ul a:hover{border-color:transparent}
   }
 
-  #tweaks-mount{position:fixed;right:0;bottom:0;z-index:9999;pointer-events:none}
-  #tweaks-mount > *{pointer-events:auto}
 
   /* ──────── ARTICLE (wazawaza vision) ──────── */
   .article{max-width:780px;margin:0 auto}
@@ -1024,13 +1015,11 @@
   /* Interview inline photos */
   .interview-figure{margin:44px auto;max-width:620px;border:1px solid var(--rule-strong);border-radius:8px;
     overflow:hidden;background:var(--paper)}
-  .interview-figure image-slot{display:block;width:100%;height:clamp(220px,42vw,360px)}
   .interview-figure img{display:block;width:100%;height:auto}
   .interview-figure.portrait{max-width:440px}
   /* Interview top photo (landscape, full width) */
   .interview-top-figure{margin:0 auto 8px;border:1px solid var(--rule-strong);border-radius:8px;
     overflow:hidden;background:var(--paper)}
-  .interview-top-figure image-slot{display:block;width:100%;height:clamp(240px,32vw,420px)}
   .interview-top-figure img{display:block;width:100%;height:clamp(300px,34vw,480px);object-fit:cover;object-position:center}
   .interview-top-figure figcaption{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;
     text-transform:none;color:var(--ink-3);padding:13px 18px;border-top:1px solid var(--rule);
@@ -1171,7 +1160,7 @@
   /* ──────── RESPONSIVE SAFETY (final overrides) ──────── */
   /* Prevent horizontal scroll on any device; allow grid children to shrink */
   html,body{max-width:100%}
-  img,svg,video,iframe,image-slot{max-width:100%}
+  img,svg,video,iframe{max-width:100%}
   .wrap > *,
   .hero-grid > *,.overview-grid > *,.guarantee-grid > *,.quality-grid > *,
   .footer-grid > *,.escrow-stage > *,.escrow-stages > *,.escrow-facts > *,
@@ -1442,8 +1431,6 @@
   .c-hero-credit{position:absolute;left:clamp(16px,3.5vw,52px);top:clamp(16px,3.5vw,40px);z-index:2;color:#fff}
   .c-hero-credit-lbl{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;
     font-size:clamp(11px,1vw,13px);letter-spacing:.16em;text-transform:uppercase}
-  .c-hero-credit-jp{font-family:"Noto Sans JP",sans-serif;font-weight:900;
-    font-size:clamp(30px,4.4vw,54px);line-height:1.05;margin-top:8px;letter-spacing:.04em}
   .c-hero-credit-en{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:600;
     font-size:clamp(15px,1.5vw,21px);letter-spacing:.12em;margin-top:4px;text-transform:uppercase}
   .c-hero-credit-en .pink{color:var(--cpink)}
@@ -1451,11 +1438,6 @@
     text-align:right;color:#fff}
   .c-hero-ed{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:500;
     font-size:clamp(13px,1.3vw,18px);letter-spacing:.05em;margin-bottom:2px}
-  .c-hero-ikusa{position:relative;display:inline-block;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:800;font-size:clamp(64px,12.5vw,188px);line-height:.86;letter-spacing:.01em}
-  .c-hero-ikusa .kana{position:absolute;left:50%;top:52%;transform:translate(-46%,-50%) rotate(-4deg);
-    color:var(--cpink);font-family:"Noto Sans JP",sans-serif;font-weight:900;
-    font-size:.34em;letter-spacing:.12em;white-space:nowrap;pointer-events:none}
 
   /* ─────── Section shell + headers ─────── */
   .sec{background:var(--cyellow);border-top:2px solid #000}
@@ -1463,8 +1445,6 @@
   .c-sechead-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
   .c-sechead-num{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;
     font-size:clamp(26px,3.6vw,44px);line-height:1;color:#000}
-  .c-sechead-kana{font-family:"Noto Sans JP",sans-serif;font-weight:700;
-    font-size:clamp(19px,2.4vw,29px);line-height:1;color:var(--cpink);letter-spacing:.05em}
   .c-sechead-en{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;
     font-size:clamp(40px,7vw,90px);line-height:.95;color:#000;letter-spacing:-.015em;margin-top:2px}
 
@@ -1502,11 +1482,6 @@
   .c-spec-sub .k{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;font-size:12px;
     letter-spacing:.1em;text-transform:uppercase;color:#000;display:block;margin-bottom:8px}
   .c-spec-sub .v{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:600;font-size:16px;color:#000;line-height:1.5}
-  .c-spec-sched{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding-top:24px}
-  .c-spec-sched .k{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;font-size:12px;
-    letter-spacing:.1em;text-transform:uppercase;color:var(--cpink);display:block;margin-bottom:6px}
-  .c-spec-sched .v{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;font-size:22px;color:#000;line-height:1.2}
-  .c-spec-sched .note{font-family:"Noto Sans JP",sans-serif;font-weight:500;font-size:13px;color:#000;margin-top:6px;line-height:1.6}
 
   /* ─────── Statement / Interview / Process / FAQ tune ─────── */
   .c-vision-title{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;font-size:38px;line-height:1.2;color:#000;margin-bottom:20px}
@@ -1558,7 +1533,6 @@
   @media (max-width:640px){
     .c-spec-grid{grid-template-columns:repeat(2,1fr);gap:16px}
     .c-spec-sub{grid-template-columns:1fr}
-    .c-spec-sched{grid-template-columns:1fr}
     .c-vision-title{font-size:26px!important}
     .vision-statement[data-en]{font-size:17px}
     .interview-body p[data-en], .interview .turn p[data-en]{font-size:17px}
@@ -2124,10 +2098,7 @@
   </div>
 </footer>
 
-<div id="tweaks-mount"></div>
-
 <!-- ════════ SCRIPTS ════════ -->
-<script src="image-slot.js"></script>
 
 <script>
   const applyState = (s) => {
@@ -2166,12 +2137,6 @@
   window.__applyState = applyState;
   window.__tweakState = TWEAK_DEFAULTS;
 </script>
-
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="tweaks-app.jsx"></script>
 
 <script>
   // Header: hamburger menu + smooth in-page scroll (Pattern C)
