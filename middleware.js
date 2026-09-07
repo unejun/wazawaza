@@ -2,7 +2,7 @@
 // wazawaza サイト設定 ── ここだけ書き換える
 // ============================================================
 
-const PASSWORD_ENABLED = true;
+const PASSWORD_ENABLED = false;
 // ↑ サイト全体の公開スイッチ。true=全体を隠す（公開前の今）／false=全体公開
 
 const LATEST = "001";
