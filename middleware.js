@@ -2,8 +2,11 @@
 // wazawaza サイト設定 ── ここだけ書き換える
 // ============================================================
 
-const PASSWORD_ENABLED = false;
-// ↑ サイト全体の公開スイッチ。true=全体を隠す（公開前の今）／false=全体公開
+const PASSWORD_ENABLED = false;        // 本番：true=全体を隠す / false=全体公開（今）
+const PREVIEW_PASSWORD_ENABLED = true; // テスト環境（プレビュー）：true=パスワードを求める / false=求めない
+const PASSWORD = "waza2";              // 本番・テスト環境 共通のパスワード
+// ↑ テスト環境の判定は Vercel の VERCEL_ENV が "preview" のときだけ。
+//    値が取れないときはパスワードなしで通す（本番を誤って閉じないため）
 
 const LATEST = "001";
 // ↑ ここに書いた番号が「本番トップ（wazawaza.tokyo）」に表示される最新作
@@ -12,11 +15,10 @@ const PROTECTED = [];
 // ↑ 番号が入っていると【その作品だけ非公開】、空っぽ[]だと【全作品公開】
 //    例: ["002"] で 002 だけ隠す。["002","003"] で 002 と 003 を同時に隠す
 
-const PASSWORD = "waza2";
-
 // ------------------------------------------------------------
 // 運用手順（覚えておくこと）
 //   ・公開する日        : PASSWORD_ENABLED を false にするだけ
+//   ・テスト環境を開放  : PREVIEW_PASSWORD_ENABLED を false にする（本番には影響しない）
 //   ・002 を作り始める  : false のまま PROTECTED に "002" を足す（003も同時なら ["002","003"]）
 //   ・002 を公開する    : LATEST を "002" に変え、PROTECTED から "002" を外す
 //   ・注意              : LATEST に入れた作品は PROTECTED に入れない（トップが認証で止まるため）
@@ -34,8 +36,19 @@ export const config = {
 export default function middleware(request) {
   const { pathname } = new URL(request.url);
 
-  // 1) 公開前（PASSWORD_ENABLED = true）: サイト全体に Basic 認証
-  if (PASSWORD_ENABLED) {
+  // 0) どの環境か判定（"preview" と完全一致のときだけテスト環境として扱う）
+  //    （値が読めない環境でもエラーで止めず、パスワードなしで通す）
+  let env;
+  try {
+    env = process.env.VERCEL_ENV;
+  } catch (e) {
+    env = undefined;
+  }
+  const isPreview = env === "preview";
+  const lockAll = isPreview ? PREVIEW_PASSWORD_ENABLED : PASSWORD_ENABLED;
+
+  // 1) 全体を隠す設定のとき: サイト全体に Basic 認証
+  if (lockAll) {
     if (!authorized(request)) return unauthorized();
   } else {
     // 2) 公開後: PROTECTED に入ったフォルダ（複数可）だけ Basic 認証で隠す

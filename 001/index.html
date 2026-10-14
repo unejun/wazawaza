@@ -1343,7 +1343,7 @@
     .topbar-inner .cta .arrow{width:14px}
   }
 
-  /* ── Phone topbar: centered Submit-an-Offer + hamburger on the right ── */
+  /* ── Phone topbar: centered Ask-for-More-Details + hamburger on the right ── */
   @media (max-width:640px){
     .topbar-inner{grid-template-columns:1fr;gap:0}
     .topbar-inner .top-right{grid-column:1;justify-self:stretch;width:100%;
@@ -1463,7 +1463,7 @@
   /* ─────── SPEC (sanmenzu) ─────── */
   .c-spec{padding-top:clamp(40px,6vw,80px);padding-bottom:clamp(40px,6vw,80px)}
   .c-sanmenzu{display:block;width:100%;max-width:1120px;margin:0 auto clamp(24px,4vw,44px);height:auto}
-  .c-spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  .c-spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
     border-top:2px solid #000;padding:26px 0 0}
   .c-spec-grid .v{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;
     font-size:clamp(24px,3vw,40px);line-height:1;color:#000}
@@ -1508,7 +1508,7 @@
     .c-burger{display:inline-flex}
     .c-topbar-in{gap:0;padding:0 10px;position:relative}
     .c-logo img{width:auto;height:22px}
-    /* Submit an Offer — big & centered, scales up toward the 500px art, capped to avoid the side icons */
+    /* Ask for More Details — big & centered, scales up toward the 500px art, capped to avoid the side icons */
     .c-offer{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
       border:0;border-radius:0;background:none;padding:0;line-height:0}
     .c-offer-img{display:block;width:min(900px,calc(100vw - 150px));height:auto}
@@ -1525,6 +1525,7 @@
   @media (min-width:901px){ .c-mmenu{display:none} }
   @media (max-width:640px){
     .c-spec-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+    .c-spec-grid > :last-child:nth-child(odd){grid-column:1 / -1}
     .c-spec-sub{grid-template-columns:1fr}
     .c-vision-title{font-size:26px!important}
     .vision-statement[data-en]{font-size:17px}
@@ -1621,19 +1622,6 @@
   .c-gal-dots button,.c-gal-dots .num{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif!important}
   .c-gal-dots .num{font-weight:700!important}
 
-  /* == item 2: schedule directly below KV (PC 2-col, SP stacked) == */
-  .c-kvsched{background:var(--cyellow);padding:clamp(28px,5vw,56px) 0}
-  .c-kvsched-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,48px);
-    max-width:1080px;margin:0 auto;padding:0 clamp(20px,4vw,44px);align-items:start}
-  .c-kvsched-grid > div{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
-  .c-kvsched .k{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:700;font-size:19px;letter-spacing:.14em;text-transform:uppercase;color:var(--cpink);line-height:1.1}
-  .c-kvsched .v{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:800;font-size:clamp(22px,2.8vw,34px);color:#000;line-height:1.1;white-space:nowrap}
-  .c-kvsched .note{font-family:"Helvetica Now","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:700;font-size:clamp(11px,1.2vw,13px);color:#000;line-height:1.35}
-  @media(max-width:820px){.c-kvsched-grid{grid-template-columns:1fr;gap:30px}}
-
   /* == item 6: original illustration + IKUSA&ASANO (700px on PC) == */
   .c-gal-extra{display:flex;flex-direction:column;align-items:center;
     gap:clamp(36px,6vw,64px);margin:clamp(28px,5vw,56px) auto clamp(36px,6vw,64px);padding:0 20px}
@@ -1664,7 +1652,7 @@
     </nav>
     <div class="c-actions">
       <a class="c-ig" href="https://www.instagram.com/wazawaza_tokyo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img class="c-ig-img" src="/001/assets/c/ig_pc.png" alt="Instagram" /><svg class="c-ig-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
-      <button type="button" class="c-offer" data-tf-popup="h2AVFX95" data-tf-disable-scroll aria-label="Submit an Offer"><picture><source media="(max-width:900px)" srcset="/001/assets/c/submit_sp.png"><img class="c-offer-img" src="/001/assets/c/submit_pc.png" alt="Submit an Offer" /></picture><span class="c-offer-txt">Submit an Offer</span></button>
+      <button type="button" class="c-offer" data-tf-popup="rYHLEmbf" data-tf-disable-scroll aria-label="Ask for more details"><picture><source media="(max-width:900px)" srcset="/001/assets/c/header_btn_ask-for-more-details_sp.png"><img class="c-offer-img" src="/001/assets/c/header_btn_ask-for-more-details_pc.png" alt="Ask for more details" /></picture><span class="c-offer-txt">Ask for more details</span></button>
       <button type="button" class="c-burger" id="c-burger" aria-label="Menu"><img src="/001/assets/c/menu_sp.png" alt="Menu" /></button>
     </div>
   </div>
@@ -1742,16 +1730,6 @@
 })();
 </script>
 
-<!-- ════════ SCHEDULE (directly below KV) ════════ -->
-<section class="c-kvsched" id="schedule" aria-label="Schedule">
-  <div class="wrap">
-    <div class="c-kvsched-grid">
-      <div><span class="k">Application Window</span><span class="v">September – October 2026</span><span class="note">A two-month application window.</span></div>
-      <div><span class="k">Shipping Schedule</span><span class="v">Oct 2026 – Feb 2028</span><span class="note">Ship dates vary by serial number.<br>Each buyer is contacted individually.</span></div>
-    </div>
-  </div>
-</section>
-
 <!-- ════════ 01 — GALLERY ════════ -->
 <section class="sec c-gallery" id="gallery">
   <div class="wrap">
@@ -1798,10 +1776,9 @@
     <div class="c-spec-grid reveal">
       <div><span class="v">140<small>CM</small></span><span class="k">Height (without base)</span></div>
       <div><span class="v">42<small>KG</small></span><span class="k">Total mass</span></div>
-      <div><span class="v">10</span><span class="k">Worldwide edition</span></div>
-      <div><span class="v">01<small>–</small>10</span><span class="k">Serial</span></div>
+      <div><span class="v">3</span><span class="k">Edition size</span></div>
     </div>
-    <p class="c-spec-coa reveal">Each piece comes with a Certificate of Authenticity.</p>
+    <p class="c-spec-coa reveal">Each piece is individually numbered and accompanied by a Certificate of Authenticity.</p>
     <div class="c-spec-sub reveal">
       <div><span class="k">Materials</span><span class="v">FRP &amp; SLA resin / steel base</span></div>
       <div><span class="k">Finish</span><span class="v">Urethane coating</span></div>
@@ -1942,18 +1919,18 @@
       <div class="chapters">
         <div class="chapter">
           <div class="chapter-no">Chapter 01</div>
-          <h3 class="chapter-title"><span class="en">Submit an Offer</span></h3>
-          <p data-en>Submit your desired price and the required details through the offer form. We select at our own discretion, and only the chosen ten are invited to the next stage.</p>
+          <h3 class="chapter-title"><span class="en">Ask for More Details</span></h3>
+          <p data-en>Contact us through the inquiry form. We will send you the details of the work and how to submit your offer by email. We select at our own discretion, and only those selected are invited to the next stage.</p>
         </div>
         <div class="chapter">
           <div class="chapter-no">Chapter 02</div>
           <h3 class="chapter-title"><span class="en">Confirmation &amp; Escrow</span></h3>
-          <p data-en>Selected buyers are contacted individually. After reviewing the final terms and confirming the purchase under our Terms of Use, payment is made through an escrow service. Identity verification is completed within the deposit process.</p>
+          <p data-en>Selected buyers are contacted individually. After reviewing the final terms and confirming the purchase under our Terms of Use, payment is made through an escrow service. Identity verification is completed within the escrow process.</p>
         </div>
         <div class="chapter">
           <div class="chapter-no">Chapter 03</div>
           <h3 class="chapter-title"><span class="en">Delivery &amp; Release</span></h3>
-          <p data-en>An international carrier specializing in fine-art transport delivers directly to your home with tracking. Once you confirm receipt, the escrowed funds are released to the operator and the transaction is complete.</p>
+          <p data-en>Once payment is confirmed through the escrow service, your piece is shipped by an international carrier to your designated address with tracking. Once you approve receipt, or the inspection period ends, the escrowed funds are released and the transaction is complete.</p>
         </div>
       </div>
     </div>
@@ -1993,41 +1970,31 @@
 
         <details class="faq-item">
           <summary>
-            <span class="faq-q"><span class="en">Can I cancel my offer or the sale?</span></span>
+            <span class="faq-q"><span class="en">Can I withdraw my offer or cancel the purchase?</span></span>
             <span class="faq-icon"></span>
           </summary>
           <div class="faq-a">
-            <p class="en">Offers may be withdrawn before the purchase is confirmed. Once you confirm your purchase and the escrow is funded, the sale is considered final.</p>
+            <p class="en">You may withdraw your offer at any time before you confirm your purchase. Once you confirm your purchase and the escrow is funded, the sale is considered final.</p>
             </div>
         </details>
 
         <details class="faq-item">
           <summary>
-            <span class="faq-q"><span class="en">When will I hear back about my offer?</span></span>
+            <span class="faq-q"><span class="en">When will I hear back after sending an inquiry?</span></span>
             <span class="faq-icon"></span>
           </summary>
           <div class="faq-a">
-            <p class="en">Selected applicants will receive direct communication from our team. Unselected applicants may not receive separate notification.</p>
+            <p class="en">After you send an inquiry, we will get back to you by email. If you don't hear from us, please check your spam folder.</p>
             </div>
         </details>
 
         <details class="faq-item">
           <summary>
-            <span class="faq-q"><span class="en">When does the offer reception period run?</span></span>
+            <span class="faq-q"><span class="en">When will the work be delivered?</span></span>
             <span class="faq-icon"></span>
           </summary>
           <div class="faq-a">
-            <p class="en">The offer reception period for this project is currently planned for September through October 2026 (approximately two months). The Company may, at its discretion, close the period early once a sufficient number of qualified offers has been received, or extend it as circumstances require. Please check this site or contact us through the contact form for the latest schedule.</p>
-            </div>
-        </details>
-
-        <details class="faq-item">
-          <summary>
-            <span class="faq-q"><span class="en">When will the figure be delivered?</span></span>
-            <span class="faq-icon"></span>
-          </summary>
-          <div class="faq-a">
-            <p class="en">Deliveries for this project are scheduled to take place between October 2026 and February 2028. As each of the ten pieces is individually handcrafted under the supervision of the Original Artist, the delivery date varies depending on the assigned serial number. Following Buyer selection, the Company will contact each Buyer individually with the specific manufacturing and delivery schedule for their piece.</p>
+            <p class="en">Shipping is arranged once your purchase is complete. Estimated delivery dates are shared individually with each buyer.</p>
             </div>
         </details>
 
@@ -2037,12 +2004,12 @@
             <span class="faq-icon"></span>
           </summary>
           <div class="faq-a">
-            <p class="en">Use the inquiry form below. Please note that we primarily support selected buyers; general pre-purchase inquiries may not always receive a response.</p>
+            <p class="en">Please use the inquiry form below, and we will get back to you by email. Requests concerning your personal information are handled as described in our Privacy Policy.</p>
             </div>
         </details>
 
         <div class="faq-cta">
-          <button type="button" data-tf-popup="juHVs6yG" data-tf-disable-scroll>
+          <button type="button" data-tf-popup="rYHLEmbf" data-tf-disable-scroll>
             <span class="main">Send an Inquiry</span>
                       </button>
         </div>
